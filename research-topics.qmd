@@ -1,6 +1,6 @@
 ---
 title: "Research Topics"
-author: "Team name - Team member 1, Team member 2, Team member 3, Team member 4"
+author: "Team name - Hellen Han, Lila Rogers, Amy Duan, Eva Aggarwal"
 format: pdf
 execute: 
   warning: false
@@ -8,12 +8,29 @@ execute:
 editor: visual
 ---
 
-## Research Topic 1
+## Research Topic 1: AI-powered job market insights
+
+One topic that captured our interest was the potential impact of Artificial Intelligence on the Job market. We all share an interest in Artificial Intelligence and its growing impact on our world, and are curious about how its influence may impact the economy and job market. People interested in this data set could be people entering the work force (us), or employers looking to optimize strategy.
+
+**Potential Research Questions:**
+
+1.  What factors influence an industry’s likelihood of adopting AI technologies?
+
+2.  Which job roles are at the highest risk of automation, and how does this risk vary by industry/salary?
+
+3.  How can we quantify the risk associated with certain jobs?
+
+We have some potential datasets that we are considering using at this time:
+
+1.  AI Job Market Unveiled: Insights from 500 Data Points on Roles, Skills, and Salaries \[<https://www.gigasheet.com/sample-data/ai-job-market-insights>\]
+2.  AI-Powered Job Market Insights a synthetic but realistic snapshot of the modern job market on the role of AI \[https://www.kaggle.com/datasets/uom190346a/ai-powered-job-market-insights\]
 
 \pagebreak
 
-## Research Topic 2
+## Research Topic 2: **A** Characteristic Analysis of Aviation Accident
+
+With several aviation accidents happening in recent periods, it is interesting to look into the historical aviation accident database, in terms of what majorly caused aviation accidents in order to better avoid similar incidents from happening in the future. We believe potential audiences include the general public who take flights to travel in both personal and business forms; people interested in airplane manufacturing industries in terms of how to minimize aviation accidents in manufacturing.
 
 \pagebreak
 
-## Research Topic 3
+## Research Topic 3 : **Health & Fitness Tracking**
