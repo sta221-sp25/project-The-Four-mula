@@ -1,6 +1,6 @@
 ---
 title: "Research Topics"
-author: "Team name - Hellen Han, Lila Rogers, Amy Duan, Eva Aggarwal"
+author: "The Four-mula: Hellen Han, Lila Rogers, Amy Duan, Eva Aggarwal"
 format: pdf
 execute: 
   warning: false
@@ -33,4 +33,18 @@ With several aviation accidents happening in recent periods, it is interesting t
 
 \pagebreak
 
-## Research Topic 3 : **Health & Fitness Tracking**
+## Research Topic 3 : **Fitness, Lifestyle, and Health Analysis**
+
+The following topic seeks to explore the impact of lifestyle factors on various health metrics and fitness levels, uncovering how different factors (exercise, sleep, stress levels, etc.) impact overall health and fitness outcomes. Our motivation for investigating this topic is to conduct health analytics, confirming the existing knowledge of fitness levels and lifestyle factors on health metrics while identifying early warning signs of health issues. Understanding the relationship between fitness activity, lifestyle choices, and health indicators is crucial for promoting healthier habits and predicting risk of health conditions. The potential audiences of the following analysis would be healthcare professionals, the general population, and fitness trainers and wellness coaches interested in using data-driven insights to understanding how lifestyle factors and fitness influence health to strengthen recommendations and next courses of action. 
+
+Potential research questions for the following topic include: 
+
+1. What fitness activities and lifestyle choices most positively influence health metrics?
+
+2. How do various lifestyle choices impact overall fitness levels? 
+
+3. Which demographic factors influence the effectiveness of various activity types on blood pressure? 
+
+Potential data sets we're interested in using involve basic demographic information about an individual, their activity and lifestyle choices, as well as various health indicators/disease prevalence. A potential dataset that we are considering is: \[<https://www.kaggle.com/datasets/jijagallery/fitlife-health-and-fitness-tracking-dataset>\], which provides a comprehensive view of individuals' daily activities, health metrics, and lifestyle habits. 
+
+
