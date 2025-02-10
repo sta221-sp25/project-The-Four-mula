@@ -31,6 +31,16 @@ We have some potential datasets that we are considering using at this time:
 
 With several aviation accidents happening in recent periods, it is interesting to look into the historical aviation accident database, in terms of what majorly caused aviation accidents in order to better avoid similar incidents from happening in the future. We believe potential audiences include the general public who take flights to travel in both personal and business forms; people interested in airplane manufacturing industries in terms of how to minimize aviation accidents in manufacturing.
 
+Potential research questions for the following topic include: 
+
+1. What are the most common causes of aviation accidents historically, and how have they changed over time?
+
+2. What role do human factors and environmental factors play in aviation accidents compared to mechanical or environmental causes?
+
+3. What characteristics of aircrafts have the largest percentage in causing accidents?
+
+Potential datasets we can use are aviation accident databases, such as historical databases like the National Transportation Safety Board (NTSB) aviation accident database and Aviation Safety Network. These databases typically include details on accidents, including dates, locations, causes, and severity (fatal/non-fatal). Furthermore, we can analyze global accident trends, such as aggregated reports from organizations like the International Civil Aviation Organization (ICAO) or Boeing’s Statistical Summary of Commercial Jet Airplane Accidents.
+
 \pagebreak
 
 ## Research Topic 3 : **Fitness, Lifestyle, and Health Analysis**
