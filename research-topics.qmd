@@ -29,7 +29,7 @@ We have some potential datasets that we are considering using at this time:
 
 ## Research Topic 2: **A** Characteristic Analysis of Aviation Accident
 
-With several aviation accidents happening in recent periods, it is interesting to look into the historical aviation accident database, in terms of what majorly caused aviation accidents in order to better avoid similar incidents from happening in the future. We believe potential audiences include the general public who take flights to travel in both personal and business forms; people interested in airplane manufacturing industries in terms of how to minimize aviation accidents in manufacturing.
+With several aviation accidents being publicized recently, a concern for air traffic and safety has been brought to light. Thus, we think it is interesting to look into the historical aviation accident database in terms of what caused past aviation accidents in order to avoid similar incidents from happening in the future. Potential audiences include the general public who take flights to travel in both personal and business forms and people in airplane manufacturing industries to minimize aircraft safety. 
 
 Potential research questions for the following topic include: 
 
