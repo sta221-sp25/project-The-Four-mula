@@ -35,9 +35,7 @@ Potential research questions for the following topic include:
 
 1. What are the most common causes of aviation accidents historically, and how have they changed over time?
 
-2. What role do human factors and environmental factors play in aviation accidents compared to mechanical or environmental causes?
-
-3. What characteristics of aircrafts have the largest percentage in causing accidents?
+2. What role do human factors and mechanical factors play in aviation accidents compared to environmental causes?
 
 Potential datasets we can use are aviation accident databases, such as historical databases like the National Transportation Safety Board (NTSB) aviation accident database and Aviation Safety Network. These databases typically include details on accidents, including dates, locations, causes, and severity (fatal/non-fatal). Furthermore, we can analyze global accident trends, such as aggregated reports from organizations like the International Civil Aviation Organization (ICAO) or Boeing’s Statistical Summary of Commercial Jet Airplane Accidents.
 
