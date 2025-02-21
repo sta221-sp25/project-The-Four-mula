@@ -1,6 +1,6 @@
 ---
 title: "Project Proposal"
-author: "Team name - Team member 1, Team member 2, Team member 3, Team member 4"
+author: "The Four-mula: Hellen Han, Lila Rogers, Amy Duan, Eva Aggarwal"
 format: pdf
 execute: 
   warning: false
@@ -19,19 +19,29 @@ library(tidymodels)
 
 ## Introduction
 
-...
+-   An introduction to the subject matter you’re investigating (citing any relevant literature)
 
-## Data description
+-   Statement of a well-developed research question.
 
-...
+-   The motivation for your research question and why it is important
+
+-   Your team’s hypotheses regarding the research question
+
+    -   This is a narrative about what you think regarding the research question, not formal statistical hypotheses.Data description
 
 ## Exploratory data analysis
 
-...
+-   The source of the data set
+
+-   A description of when and how the data were originally collected (by the original data curator, not necessarily how you found the data)
+
+-   A description of the observations and general characteristics being measured
 
 ## Analysis approach
 
-...
+-   Description of data processing you need to do to prepare for analysis, such as joining multiple data sets, handling missing data, etc.
+
+-   Visualizations, summary statistics, and narrative to describe the distribution of the [**response**]{.underline} variable.
 
 ## Data dictionary
 
