@@ -17,7 +17,7 @@ library(tidymodels)
 # add code to load data
 ```
 
-## Introduction
+## Introduction - Lila
 
 -   An introduction to the subject matter you’re investigating (citing any relevant literature)
 
@@ -29,7 +29,7 @@ library(tidymodels)
 
     -   This is a narrative about what you think regarding the research question, not formal statistical hypotheses.Data description
 
-## Exploratory data analysis
+## Exploratory data analysis - Eva
 
 -   The source of the data set
 
@@ -37,12 +37,12 @@ library(tidymodels)
 
 -   A description of the observations and general characteristics being measured
 
-## Analysis approach
+## Analysis approach - Amy
 
 -   Description of data processing you need to do to prepare for analysis, such as joining multiple data sets, handling missing data, etc.
 
 -   Visualizations, summary statistics, and narrative to describe the distribution of the [**response**]{.underline} variable.
 
-## Data dictionary
+## Data dictionary - Hellen
 
 The data dictionary can be found [here](ADD%20LINK!!!) \[Update the link and remove this note!\]
