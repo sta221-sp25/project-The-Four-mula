@@ -10,11 +10,11 @@ editor: visual
 
 ```{r}
 #| label: load-pkg-data
+
 library(tidyverse)
 library(tidymodels)
-# add other packages as needed
 
-# add code to load data
+data <- read_csv("data/Life-Expectancy-Data-Updated.csv")
 ```
 
 ## Introduction - Lila
@@ -37,11 +37,36 @@ library(tidymodels)
 
 -   A description of the observations and general characteristics being measured
 
-## Analysis approach - Amy
+## Analysis approach 
 
 -   Description of data processing you need to do to prepare for analysis, such as joining multiple data sets, handling missing data, etc.
 
--   Visualizations, summary statistics, and narrative to describe the distribution of the [**response**]{.underline} variable.
+For the following life expectancy dataset, to prepare the dataset for analysis, first, we need to consider missing data values within the dataset, eliminating observations that are incomplete across our predictor/response variables. Furthermore, we need to check for data inconsistencies in the quantitative variables by analyzing the summary statistics for the predictor variables and note whether there are extreme outliers in the min/max values. 
+
+-   Visualizations, summary statistics, and narrative to describe the distribution of the [**Life_expectancy**]{.underline} variable.
+
+```{r}
+summary(data$Life_expectancy)
+```
+
+```{r}
+data %>% 
+  ggplot(mapping = aes(x = Life_expectancy)) + 
+  geom_histogram() + 
+  labs(title = "Distribution of Life Expectancy of Countries from 2000-2015", 
+       x = "Life Expectancy (years)", 
+       y = "Count")
+
+data %>% 
+  ggplot(mapping = aes(x = Life_expectancy)) + 
+  geom_boxplot() + 
+  labs(title = "Distribution of Life Expectancy of Countries from 2000-2015", 
+       x = "Life Expectancy (years)", 
+       y = "Count") 
+```
+
+The visualizations describe that the distribution of life expectancy of countries from 2000-2015 is left-skewed and unimodal, indicating that most countries have a relatively higher life expectancy. Furthermore, the distribution of life expectancy of countries have a center of approximately 71.40 years, described by the median, and a spread of approximately 12.70 years, described by the interquartile range. There seem to be a few outliers, as shown in the boxplot visualization, with a few countries with a life expectancy less than 45. The majority of countries' life expectancies tend to be between approximately 70 and 80 years. 
+
 
 ## Data dictionary - Hellen
 
