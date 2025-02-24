@@ -29,7 +29,7 @@ data <- read_csv("data/AB_NYC_2019.csv")
 
     -   This is a narrative about what you think regarding the research question, not formal statistical hypotheses.Data description
 
-## Exploratory data analysis - Eva
+## Data description - Eva
 
 -   The source of the data set
 
@@ -37,7 +37,7 @@ data <- read_csv("data/AB_NYC_2019.csv")
 
 -   A description of the observations and general characteristics being measured
 
-## Analysis approach 
+## Data processing
 
 -   Description of data processing you need to do to prepare for analysis, such as joining multiple data sets, handling missing data, etc.
 
@@ -69,6 +69,13 @@ data %>%
 
 The visualizations describe that the distribution of NYC Airbnb prices in 2019 is heavily right-skewed and unimodal, indicating that although most NYC Airbnb prices are typically priced below 200 dollars, there are various outliers in Airbnb prices that are significantly more expensive. For the purpose of creating meaningful visualizations, we omitted Airbnb prices that are greater than 1000 in the figures. Furthermore, the distribution of Airbnb prices has a center of approximately 106.0 dollars, described by the median, and a spread of approximately 106.0 dollars, described by the interquartile range. There are multiple outliers in the dataset for prices greater than approximately 350 dollars, as shown in the boxplot visualization, as more high-end NYC Airbnbs have a significantly greater price. The majority of NYC Airbnb prices tend to be between approximately 50 and 200 dollars. 
 
-## Data dictionary - Hellen
+## Analysis Approach - Hellen
+
+- A description of the potential predictor variables of interest
+
+- Regression model technique (multiple linear regression for quantitative response variable or logistic regression for a categorical response variable)
+
+
+## Data Dictionary - Hellen 
 
 The data dictionary can be found [here](ADD%20LINK!!!) \[Update the link and remove this note!\]
