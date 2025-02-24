@@ -14,7 +14,9 @@ editor: visual
 library(tidyverse)
 library(tidymodels)
 
-data <- read_csv("data/AB_NYC_2019.csv")
+data <-read_csv("data/AB_NYC_2019.csv")
+
+imdb_data <- read_csv("data/Imdb Movie New Data_v2.csv")
 ```
 
 ## Introduction - Lila
@@ -27,15 +29,65 @@ data <- read_csv("data/AB_NYC_2019.csv")
 
 -   Your team’s hypotheses regarding the research question
 
-    -   This is a narrative about what you think regarding the research question, not formal statistical hypotheses.Data description
+    -   This is a narrative about what you think regarding the research question, not formal statistical hypotheses.
 
 ## Data description - Eva
 
--   The source of the data set
+We obtained this data set from [Kaggle](https://www.kaggle.com/), an online data science platform with a collection of community-developed open data sets. Here is the [link](https://www.kaggle.com/datasets/anandshaw2001/imdb-data) to where we found the data.
 
--   A description of when and how the data were originally collected (by the original data curator, not necessarily how you found the data)
+This data was collected by **Anand Shaw** from the **IMDb website** using sites, and converted into a .csv file. The data was updated on a daily basis until 2 months ago.
 
--   A description of the observations and general characteristics being measured
+This data set collects information available on the IMDb website for different movies, such that each observation is some characteristics of a specific movie. It measures the following **21 characteristics** per movie:
+
+1\. `id`: A unique identifier for each movie.
+
+2\. `title`: The name of the movie.
+
+3\. `vote_average`: The average rating the movie has received from users (on a scale, typically from 0 to 10).
+
+4\. `vote_count`: The total number of votes or ratings submitted for the movie.
+
+5\. `status`: The current state of the movie (e.g., "Released," "Post-Production").
+
+6\. `release_date`: The date when the movie was officially released.
+
+7\. `revenue`: The total earnings the movie made (usually in USD).
+
+8\. `runtime`: The duration of the movie in minutes.
+
+9\. `adult`: Indicates whether the movie is classified as adult content (e.g., "True" or "False").
+
+10\. `budget`: The total cost of producing the movie (usually in USD).
+
+11\. `imdb_id`: The unique identifier for the movie on IMDb (Internet Movie Database).
+
+12\. `original_language`: The language in which the movie was originally produced (e.g., "en" for English).
+
+13\. `original_title`: The original title of the movie in its native language.
+
+14\. `overview`: A brief summary or description of the movie's plot.
+
+15\. `popularity`: A metric indicating how popular the movie is (typically based on views, searches, or ratings).
+
+16\. `tagline`: A short phrase or slogan associated with the movie.
+
+17\. `genres`: The categories or genres the movie belongs to (e.g., Action, Comedy, Drama).
+
+18\. `production_companies`: The names of the companies involved in producing the movie.
+
+19\. `production_countries`: The countries where the movie was produced.
+
+20\. `spoken_languages`: The languages spoken in the movie.
+
+21\. `keywords`: Important terms or phrases associated with the movie, often used for categorization or search.
+
+```{r}
+#| label: glimpse-data
+
+glimpse(imdb_data)
+```
+
+Due to the large size of the original data set, for the purpose of uploading this to our repository, we dropped the last characteristic, `keyword`, from the data set due to its redundancy, irrelevance to the research question and presence of a significant number of null values. So, our data set now contains 20 variables.
 
 ## Data processing
 
