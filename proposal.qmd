@@ -14,7 +14,7 @@ editor: visual
 library(tidyverse)
 library(tidymodels)
 
-data <- read_csv("data/Life-Expectancy-Data-Updated.csv")
+data <- read_csv("data/AB_NYC_2019.csv")
 ```
 
 ## Introduction - Lila
@@ -41,32 +41,33 @@ data <- read_csv("data/Life-Expectancy-Data-Updated.csv")
 
 -   Description of data processing you need to do to prepare for analysis, such as joining multiple data sets, handling missing data, etc.
 
-For the following life expectancy dataset, to prepare the dataset for analysis, first, we need to consider missing data values within the dataset, eliminating observations that are incomplete across our predictor/response variables. Furthermore, we need to check for data inconsistencies in the quantitative variables by analyzing the summary statistics for the predictor variables and note whether there are extreme outliers in the min/max values. 
+For the following New York City Airbnb dataset, to prepare the dataset for analysis, first, we need to consider missing data values within the dataset, eliminating observations that are incomplete across our predictor/response variables. The majority of these missing values appear in the last_review and reviews_per_month variables. Furthermore, we need to check for data inconsistencies in the quantitative variables by analyzing the summary statistics for the predictor variables and note whether there are extreme outliers that are improbable (ex. Airbnb prices of 0, unreasonably long minimum night Airbnb rentals). In addition, our categorical predictors, such as neighbourhood_group and room_type need to be converted to factors to allow us to use them in our regression analysis. Lastly, since our dataset describes all NYC Airbnb listings in 2019, there is a possibility of hosts with multiple Airbnb listings, and thus due to host dependency, we need to create a unique set of Airbnb listings by host_id to analyze the relationship between price and possible predictor variables. 
 
--   Visualizations, summary statistics, and narrative to describe the distribution of the [**Life_expectancy**]{.underline} variable.
+-   Visualizations, summary statistics, and narrative to describe the distribution of the [**price**]{.underline} variable.
 
 ```{r}
-summary(data$Life_expectancy)
+summary(data$price)
 ```
 
 ```{r}
 data %>% 
-  ggplot(mapping = aes(x = Life_expectancy)) + 
+  ggplot(mapping = aes(x = price)) + 
   geom_histogram() + 
-  labs(title = "Distribution of Life Expectancy of Countries from 2000-2015", 
-       x = "Life Expectancy (years)", 
-       y = "Count")
+  labs(title = "Distribution of NYC Airbnb Prices (2019)",
+       x = "Airbnb Price (dollars)", 
+       y = "Count") + 
+  scale_x_continuous(limits = c(0, 1000))
 
 data %>% 
-  ggplot(mapping = aes(x = Life_expectancy)) + 
+  ggplot(mapping = aes(x = price)) + 
   geom_boxplot() + 
-  labs(title = "Distribution of Life Expectancy of Countries from 2000-2015", 
-       x = "Life Expectancy (years)", 
-       y = "Count") 
+  labs(title = "Distribution of NYC Airbnb Prices (2019)",
+       x = "Airbnb Price (dollars)", 
+       y = "Count") + 
+  scale_x_continuous(limits = c(0, 1000))
 ```
 
-The visualizations describe that the distribution of life expectancy of countries from 2000-2015 is left-skewed and unimodal, indicating that most countries have a relatively higher life expectancy. Furthermore, the distribution of life expectancy of countries have a center of approximately 71.40 years, described by the median, and a spread of approximately 12.70 years, described by the interquartile range. There seem to be a few outliers, as shown in the boxplot visualization, with a few countries with a life expectancy less than 45. The majority of countries' life expectancies tend to be between approximately 70 and 80 years. 
-
+The visualizations describe that the distribution of NYC Airbnb prices in 2019 is heavily right-skewed and unimodal, indicating that although most NYC Airbnb prices are typically priced below 200 dollars, there are various outliers in Airbnb prices that are significantly more expensive. For the purpose of creating meaningful visualizations, we omitted Airbnb prices that are greater than 1000 in the figures. Furthermore, the distribution of Airbnb prices has a center of approximately 106.0 dollars, described by the median, and a spread of approximately 106.0 dollars, described by the interquartile range. There are multiple outliers in the dataset for prices greater than approximately 350 dollars, as shown in the boxplot visualization, as more high-end NYC Airbnbs have a significantly greater price. The majority of NYC Airbnb prices tend to be between approximately 50 and 200 dollars. 
 
 ## Data dictionary - Hellen
 
