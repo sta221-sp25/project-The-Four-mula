@@ -17,7 +17,7 @@ library(tidymodels)
 imdb_data <- read_csv("data/Imdb Movie New Data_v2.csv")
 ```
 
-## Introduction - Lila
+## Introduction
 
 As a group, we decided to explore several metrics related to movie revenues in hope to understand what contributes to a movie's overall success. We chose revenue as our success metric, as this is the most popular measurement of a movie's success in other academic work, therefore allowing our analysis to complement existing literature. A movie’s revenue is defined as the total amount of money a given movie makes from ticket sales, and is influenced by a wealth of factors, several of which we will explore in our analysis. Given our goal of determining what factors contribute most to a movies success, our leading research question is:
 
@@ -25,57 +25,45 @@ What factors in a movie's production and release have the greatest impact on its
 
 We chose this research question because in determining what contributes to a movie's revenue, we can gain the necessary understanding to predict how certain movies will do based on our predictors. We predict that the factor that will have the greatest influence on total revenue will be budget, as a movie's budget likely contributes to several other influential factors such as the actors featured in the movies, the investment in marketing the movie before its release, and the overall quality of the film.
 
-\
+\pagebreak
 
-## Data description - Eva
+## Data description
 
 We obtained this data set from [Kaggle](https://www.kaggle.com/), an online data science platform with a collection of community-developed open data sets. Here is the [link](https://www.kaggle.com/datasets/anandshaw2001/imdb-data) to where we found the data.
 
 This data was collected by **Anand Shaw** from the **IMDb website** using sites, and converted into a .csv file. The data was updated on a daily basis until 2 months ago.
 
-This data set collects information available on the IMDb website for different movies, such that each observation is some characteristics of a specific movie. It measures the following **21 characteristics** per movie:
+This data set collects information available on the IMDb website for different movies, such that each observation is some characteristics of a specific movie. It measures the following **15 characteristics** per movie:
 
-1\. `id`: A unique identifier for each movie.
+`title`: The name of the movie.
 
-2\. `title`: The name of the movie.
+`vote_average`: The average rating the movie has received from users (on a scale, typically from 0 to 10).
 
-3\. `vote_average`: The average rating the movie has received from users (on a scale, typically from 0 to 10).
+`vote_count`: The total number of votes or ratings submitted for the movie.
 
-4\. `vote_count`: The total number of votes or ratings submitted for the movie.
+`status`: The current state of the movie (e.g., "Released," "Post-Production").
 
-5\. `status`: The current state of the movie (e.g., "Released," "Post-Production").
+`release_date`: The date when the movie was officially released.
 
-6\. `release_date`: The date when the movie was officially released.
+`revenue`: The total earnings the movie made (usually in USD).
 
-7\. `revenue`: The total earnings the movie made (usually in USD).
+`runtime`: The duration of the movie in minutes.
 
-8\. `runtime`: The duration of the movie in minutes.
+`adult`: Indicates whether the movie is classified as adult content (e.g., "True" or "False").
 
-9\. `adult`: Indicates whether the movie is classified as adult content (e.g., "True" or "False").
+`budget`: The total cost of producing the movie (usually in USD).
 
-10\. `budget`: The total cost of producing the movie (usually in USD).
+`imdb_id`: The unique identifier for the movie on IMDb (Internet Movie Database).
 
-11\. `imdb_id`: The unique identifier for the movie on IMDb (Internet Movie Database).
+`original_language`: The language in which the movie was originally produced (e.g., "en" for English).
 
-12\. `original_language`: The language in which the movie was originally produced (e.g., "en" for English).
+`popularity`: A metric indicating how popular the movie is (typically based on views, searches, or ratings).
 
-13\. `original_title`: The original title of the movie in its native language.
+`genres`: The categories or genres the movie belongs to (e.g., Action, Comedy, Drama).
 
-14\. `overview`: A brief summary or description of the movie's plot.
+`production_countries`: The countries where the movie was produced.
 
-15\. `popularity`: A metric indicating how popular the movie is (typically based on views, searches, or ratings).
-
-16\. `tagline`: A short phrase or slogan associated with the movie.
-
-17\. `genres`: The categories or genres the movie belongs to (e.g., Action, Comedy, Drama).
-
-18\. `production_companies`: The names of the companies involved in producing the movie.
-
-19\. `production_countries`: The countries where the movie was produced.
-
-20\. `spoken_languages`: The languages spoken in the movie.
-
-21\. `keywords`: Important terms or phrases associated with the movie, often used for categorization or search.
+`spoken_languages`: The languages spoken in the movie.
 
 ```{r}
 #| label: glimpse-data
@@ -83,11 +71,11 @@ This data set collects information available on the IMDb website for different m
 glimpse(imdb_data)
 ```
 
-Due to the large size of the original data set, for the purpose of uploading this to our repository, we dropped the last characteristic, `keyword`, from the data set due to its redundancy, irrelevance to the research question and presence of a significant number of null values. So, our data set now contains 20 variables.
+Due to the large size of the original data set, for the purpose of uploading this to our repository, we dropped 6 characteristics (`id`, `original_title`, `tagline`, `production_companies`, `overview`, `keyword`) from the data set due to their redundancy, irrelevance to the research question and presence of a significant number of null values. So, our data set now contains **20** **variables**.
+
+\pagebreak
 
 ## Data processing
-
--   Description of data processing you need to do to prepare for analysis, such as joining multiple data sets, handling missing data, etc.
 
 For the following Imdb movies dataset, to prepare the dataset for analysis, first, we need to consider missing data values within the dataset, eliminating observations that are incomplete across our predictor/response variables and filtering out movies that haven't yet been released. The majority of these missing values appear in variables that aren't relevant to our regression analysis, however, we still need to account for missing values in our predictor variables.
 
@@ -96,8 +84,6 @@ Furthermore, we need to check for data inconsistencies in the quantitative varia
 In addition, our categorical predictors, such as adult and original language, need to be converted to factors to allow us to use them in our regression analysis.
 
 A possible consideration for our dataset in the data processing phase is to filter the dataset for more recent Imdb movies to gain a better and more representative understanding of recent Imdb movie revenues.
-
--   Visualizations, summary statistics, and narrative to describe the distribution of the [**revenue**]{.underline} variable.
 
 ```{r}
 summary(imdb_data$revenue)
@@ -132,7 +118,9 @@ From the summary statistics, it is observable that the majority of these revenue
 
 The visualizations describe that the distribution of Imdb movie revenue is heavily right-skewed and unimodal, indiciating that there are various outliers in Imdb movies that generate significantly higher revenues. For the purpose of creating meaningful visualizations, we omitted Imdb movie revenues that are greater than 100,000,000 dollars for the histogram and greater than 10,000,000 dollars for the boxplot. Furthermore, the distribution of Imdb movie revenues has a center of approximately 1,818,000 dollars, described by the median, and a spread of approximately 18,616,000 dollars, described by the interquartile range. There are multiple outliers in the dataset for Imdb movie revenue greater than approximately 5,000,000 dollars, as shown in the boxplot visualization, as a few Imdb movies have significantly higher generated revenues. The majority of Imdb movies generate between approximately 0 and 2,000,000 dollars in revenue.
 
-## Analysis Approach - Hellen
+\pagebreak
+
+## Analysis Approach
 
 Given the information provided by the dataset, we are interested in investigating into what factor contributed to the movie revenue (`revenue`) of all IMDb movies within the dataset to provide more insights into recent trends in the movie industry and how producers and directors can maximize their revenue with every movie they worked on. Some potential predictor variables of interest includes:
 
@@ -153,5 +141,3 @@ Given the information provided by the dataset, we are interested in investigatin
 -   `genres`: movie genre might also influence movie revenue
 
 Given that our response variable is quantiative and that we have multiple predictor variable(both quantitative and categorial), we believe multiple linear regression model is the most suitable regression model. Because it can handle multiple predictors simultaneously and quantify the impact of each predictor on the revenue.
-
-## Data Dictionary - Hellen
