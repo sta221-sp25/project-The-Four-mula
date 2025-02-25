@@ -19,15 +19,13 @@ imdb_data <- read_csv("data/Imdb Movie New Data_v2.csv")
 
 ## Introduction - Lila
 
--   An introduction to the subject matter you’re investigating (citing any relevant literature)
+As a group, we decided to explore several metrics related to movie revenues in hope to understand what contributes to a movie's overall success. We chose revenue as our success metric, as this is the most popular measurement of a movie's success in other academic work, therefore allowing our analysis to complement existing literature. A movie’s revenue is defined as the total amount of money a given movie makes from ticket sales, and is influenced by a wealth of factors, several of which we will explore in our analysis. Given our goal of determining what factors contribute most to a movies success, our leading research question is:
 
--   Statement of a well-developed research question.
+What factors in a movie's production and release have the greatest impact on its total revenue?
 
--   The motivation for your research question and why it is important
+We chose this research question because in determining what contributes to a movie's revenue, we can gain the necessary understanding to predict how certain movies will do based on our predictors. We predict that the factor that will have the greatest influence on total revenue will be budget, as a movie's budget likely contributes to several other influential factors such as the actors featured in the movies, the investment in marketing the movie before its release, and the overall quality of the film.
 
--   Your team’s hypotheses regarding the research question
-
-    -   This is a narrative about what you think regarding the research question, not formal statistical hypotheses.
+\
 
 ## Data description - Eva
 
