@@ -20,7 +20,7 @@ sites
 ## Imdb Movie New Data_v2.csv
 
 | Variable             | Description                                                                                    |
-|:-----------------|:-----------------------------------------------------|
+|:---------------------|:-----------------------------------------------------------------------------------------------|
 | id                   | A unique identifier for each movie                                                             |
 | title                | The name of the movie.                                                                         |
 | vote_average         | The average rating the movie has received from users (on a scale, typically from 0 to 10).     |
