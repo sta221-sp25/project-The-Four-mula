@@ -14,8 +14,6 @@ editor: visual
 library(tidyverse)
 library(tidymodels)
 
-data <-read_csv("data/AB_NYC_2019.csv")
-
 imdb_data <- read_csv("data/Imdb Movie New Data_v2.csv")
 ```
 
@@ -93,33 +91,46 @@ Due to the large size of the original data set, for the purpose of uploading thi
 
 -   Description of data processing you need to do to prepare for analysis, such as joining multiple data sets, handling missing data, etc.
 
-For the following New York City Airbnb dataset, to prepare the dataset for analysis, first, we need to consider missing data values within the dataset, eliminating observations that are incomplete across our predictor/response variables. The majority of these missing values appear in the last_review and reviews_per_month variables. Furthermore, we need to check for data inconsistencies in the quantitative variables by analyzing the summary statistics for the predictor variables and note whether there are extreme outliers that are improbable (ex. Airbnb prices of 0, unreasonably long minimum night Airbnb rentals). In addition, our categorical predictors, such as neighbourhood_group and room_type need to be converted to factors to allow us to use them in our regression analysis. Lastly, since our dataset describes all NYC Airbnb listings in 2019, there is a possibility of hosts with multiple Airbnb listings, and thus due to host dependency, we need to create a unique set of Airbnb listings by host_id to analyze the relationship between price and possible predictor variables.
+For the following Imdb movies dataset, to prepare the dataset for analysis, first, we need to consider missing data values within the dataset, eliminating observations that are incomplete across our predictor/response variables and filtering out movies that haven't yet been released. The majority of these missing values appear in variables that aren't relevant to our regression analysis, however, we still need to account for missing values in our predictor variables.
 
--   Visualizations, summary statistics, and narrative to describe the distribution of the [**price**]{.underline} variable.
+Furthermore, we need to check for data inconsistencies in the quantiative variables by analyzing the summary statistics for the predictor variables and noting whether there are extreme outliers that are improbable (quantitative variables with an unreasonable value of 0 or negative values). For ease of interpretation, we might scale some quantitative variables, such as revenue and budget scaled in millions of dollars. 
+
+In addition, our categorical predictors, such as adult and original language, need to be converted to factors to allow us to use them in our regression analysis. 
+
+-   Visualizations, summary statistics, and narrative to describe the distribution of the [**revenue**]{.underline} variable.
 
 ```{r}
-summary(data$price)
+summary(imdb_data$revenue)
+
+imdb_data_revenue <- imdb_data %>% 
+  filter(revenue > 0) 
+summary(imdb_data_revenue$revenue)
 ```
 
 ```{r}
-data %>% 
-  ggplot(mapping = aes(x = price)) + 
+imdb_data %>% 
+  filter(revenue > 0) %>% 
+  ggplot(mapping = aes(x = revenue)) + 
   geom_histogram() + 
-  labs(title = "Distribution of NYC Airbnb Prices (2019)",
-       x = "Airbnb Price (dollars)", 
+  labs(title = "Distribution of Imdb Movie Revenue",
+       x = "Total Revenue (USD)", 
        y = "Count") + 
-  scale_x_continuous(limits = c(0, 1000))
+  scale_x_continuous(limits = c(0, 100000000)) + 
+  scale_y_continuous(limits = c(0, 2500)) 
 
-data %>% 
-  ggplot(mapping = aes(x = price)) + 
+imdb_data %>% 
+  filter(revenue > 0) %>% 
+  ggplot(mapping = aes(x = revenue)) + 
   geom_boxplot() + 
-  labs(title = "Distribution of NYC Airbnb Prices (2019)",
-       x = "Airbnb Price (dollars)", 
+  labs(title = "Distribution of Imdb Movie Revenue",
+       x = "Total Revenue (USD)", 
        y = "Count") + 
-  scale_x_continuous(limits = c(0, 1000))
+  scale_x_continuous(limits = c(0, 10000000))
 ```
 
-The visualizations describe that the distribution of NYC Airbnb prices in 2019 is heavily right-skewed and unimodal, indicating that although most NYC Airbnb prices are typically priced below 200 dollars, there are various outliers in Airbnb prices that are significantly more expensive. For the purpose of creating meaningful visualizations, we omitted Airbnb prices that are greater than 1000 in the figures. Furthermore, the distribution of Airbnb prices has a center of approximately 106.0 dollars, described by the median, and a spread of approximately 106.0 dollars, described by the interquartile range. There are multiple outliers in the dataset for prices greater than approximately 350 dollars, as shown in the boxplot visualization, as more high-end NYC Airbnbs have a significantly greater price. The majority of NYC Airbnb prices tend to be between approximately 50 and 200 dollars.
+From the summary statistics, it is observable that the majority of these revenue values are unknown values (represented by 0), as the 1st quartile, median, and 3rd quartile are all 0 dollars. Thus, to obtain representative visualizations of the distribution of the revenue response variable, we analyze Imdb movies that have a revenue greater than 0 (non-missing values in this dataset). 
+
+The visualizations describe that the distribution of Imdb movie revenue is heavily right-skewed and unimodal, indiciating that there are various outliers in Imdb movies that generate significantly higher revenues. For the purpose of creating meaningful visualizations, we omitted Imdb movie revenues that are greater than 100,000,000 dollars for the histogram and greater than 10,000,000 dollars for the boxplot. Furthermore, the distribution of Imdb movie revenues has a center of approximately 1,818,000 dollars, described by the median, and a spread of approximately 18,616,000 dollars, described by the interquartile range. There are multiple outliers in the dataset for Imdb movie revenue greater than approximately 5,000,000 dollars, as shown in the boxplot visualization, as a few Imdb movies have significantly higher generated revenues. The majority of Imdb movies generate between approximately 0 and 2,000,000 dollars in revenue. 
 
 ## Analysis Approach - Hellen
 
