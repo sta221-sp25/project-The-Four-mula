@@ -93,9 +93,11 @@ Due to the large size of the original data set, for the purpose of uploading thi
 
 For the following Imdb movies dataset, to prepare the dataset for analysis, first, we need to consider missing data values within the dataset, eliminating observations that are incomplete across our predictor/response variables and filtering out movies that haven't yet been released. The majority of these missing values appear in variables that aren't relevant to our regression analysis, however, we still need to account for missing values in our predictor variables.
 
-Furthermore, we need to check for data inconsistencies in the quantiative variables by analyzing the summary statistics for the predictor variables and noting whether there are extreme outliers that are improbable (quantitative variables with an unreasonable value of 0 or negative values). For ease of interpretation, we might scale some quantitative variables, such as revenue and budget scaled in millions of dollars. 
+Furthermore, we need to check for data inconsistencies in the quantitative variables by analyzing the summary statistics for the predictor variables and noting whether there are extreme outliers that are improbable (quantitative variables with an unreasonable value of 0 or negative values). For ease of interpretation, we might scale some quantitative variables, such as revenue and budget scaled in millions of dollars. 
 
 In addition, our categorical predictors, such as adult and original language, need to be converted to factors to allow us to use them in our regression analysis. 
+
+A possible consideration for our dataset in the data processing phase is to filter the dataset for more recent Imdb movies to gain a better and more representative understanding of recent Imdb movie revenues. 
 
 -   Visualizations, summary statistics, and narrative to describe the distribution of the [**revenue**]{.underline} variable.
 
