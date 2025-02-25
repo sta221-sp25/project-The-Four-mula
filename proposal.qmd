@@ -21,7 +21,7 @@ imdb_data <- read_csv("data/Imdb Movie New Data_v2.csv")
 
 As a group, we decided to explore several metrics related to movie revenues in hope to understand what contributes to a movie's overall success. We chose revenue as our success metric, as this is the most popular measurement of a movie's success in other academic work, therefore allowing our analysis to complement existing literature. A movie’s revenue is defined as the total amount of money a given movie makes from ticket sales, and is influenced by a wealth of factors, several of which we will explore in our analysis. Given our goal of determining what factors contribute most to a movies success, our leading research question is:
 
-What factors in a movie's production and release have the greatest impact on its total revenue?
+**What factors in a movie's production and release have the greatest impact on its total revenue?**
 
 We chose this research question because in determining what contributes to a movie's revenue, we can gain the necessary understanding to predict how certain movies will do based on our predictors. We predict that the factor that will have the greatest influence on total revenue will be budget, as a movie's budget likely contributes to several other influential factors such as the actors featured in the movies, the investment in marketing the movie before its release, and the overall quality of the film.
 
@@ -77,13 +77,13 @@ Due to the large size of the original data set, for the purpose of uploading thi
 
 ## Data processing
 
-For the following Imdb movies dataset, to prepare the dataset for analysis, first, we need to consider missing data values within the dataset, eliminating observations that are incomplete across our predictor/response variables and filtering out movies that haven't yet been released. The majority of these missing values appear in variables that aren't relevant to our regression analysis, however, we still need to account for missing values in our predictor variables.
+For the following Imdb movies data set, to prepare the data set for analysis, first, we need to consider missing data values within the dataset, eliminating observations that are incomplete across our predictor/response variables and filtering out movies that haven't yet been released. The majority of these missing values appear in variables that aren't relevant to our regression analysis, however, we still need to account for missing values in our predictor variables.
 
 Furthermore, we need to check for data inconsistencies in the quantitative variables by analyzing the summary statistics for the predictor variables and noting whether there are extreme outliers that are improbable (quantitative variables with an unreasonable value of 0 or negative values). For ease of interpretation, we might scale some quantitative variables, such as revenue and budget scaled in millions of dollars.
 
 In addition, our categorical predictors, such as adult and original language, need to be converted to factors to allow us to use them in our regression analysis.
 
-A possible consideration for our dataset in the data processing phase is to filter the dataset for more recent Imdb movies to gain a better and more representative understanding of recent Imdb movie revenues.
+A possible consideration for our data set in the data processing phase is to filter the data set for more recent IMDb movies to gain a better and more representative understanding of recent IMDb movie revenues.
 
 ```{r}
 summary(imdb_data$revenue)
@@ -114,7 +114,7 @@ imdb_data %>%
   scale_x_continuous(limits = c(0, 10000000))
 ```
 
-From the summary statistics, it is observable that the majority of these revenue values are unknown values (represented by 0), as the 1st quartile, median, and 3rd quartile are all 0 dollars. Thus, to obtain representative visualizations of the distribution of the revenue response variable, we analyze Imdb movies that have a revenue greater than 0 (non-missing values in this dataset).
+From the summary statistics, it is observable that the majority of these revenue values are unknown values (represented by 0), as the 1st quartile, median, and 3rd quartile are all 0 dollars. Thus, to obtain representative visualizations of the distribution of the revenue response variable, we analyze Imdb movies that have a revenue greater than 0 (non-missing values in this data set).
 
 The visualizations describe that the distribution of Imdb movie revenue is heavily right-skewed and unimodal, indiciating that there are various outliers in Imdb movies that generate significantly higher revenues. For the purpose of creating meaningful visualizations, we omitted Imdb movie revenues that are greater than 100,000,000 dollars for the histogram and greater than 10,000,000 dollars for the boxplot. Furthermore, the distribution of Imdb movie revenues has a center of approximately 1,818,000 dollars, described by the median, and a spread of approximately 18,616,000 dollars, described by the interquartile range. There are multiple outliers in the dataset for Imdb movie revenue greater than approximately 5,000,000 dollars, as shown in the boxplot visualization, as a few Imdb movies have significantly higher generated revenues. The majority of Imdb movies generate between approximately 0 and 2,000,000 dollars in revenue.
 
@@ -122,7 +122,7 @@ The visualizations describe that the distribution of Imdb movie revenue is heavi
 
 ## Analysis Approach
 
-Given the information provided by the dataset, we are interested in investigating into what factor contributed to the movie revenue (`revenue`) of all IMDb movies within the dataset to provide more insights into recent trends in the movie industry and how producers and directors can maximize their revenue with every movie they worked on. Some potential predictor variables of interest includes:
+Given the information provided by the data set, we are interested in investigating what factors contribute most to the movie revenue (`revenue`) of all IMDb movies to provide more insight into recent trends in the movie industry. This could help explore how producers and directors can maximize their revenue with every movie they work on. Some potential predictor variables of interest include:
 
 -   `vote_average`: The average rating the movie has received from users, on a scale from 0-10 can help us understand how popularity within users influence movie revenue
 
@@ -132,12 +132,12 @@ Given the information provided by the dataset, we are interested in investigatin
 
 -   `runtime`: The duration of the movie in minutes could also influence movie revenue
 
--   `adult`: whether the movie is classified as adult content can also influence movie revenue, as specific content might attract more revenue than the others
+-   `adult`: whether the movie is classified as adult content can also influence movie revenue, as specific content might attract more audiences than the others
 
 -   `budget`: The total cost of producing the movie might indicates how much upfront capital is poured to the production and thereby influence the movie revenue.
 
--   `original_language`: the language in which the movie was originally produced might also influence movie revenue, as specific language might cover more audience than the others and thereby leading to more revenue generation
+-   `original_language`: the language in which the movie was originally produced might also influence movie revenue, as specific language might appeal to more audiences and cover a larger group of people than the others and thereby leading to more revenue generation
 
--   `genres`: movie genre might also influence movie revenue
+-   `genres`: movie genre might also influence movie revenue. For instance, some genres might appeal to younger and older audiences alike, generating more revenue.
 
-Given that our response variable is quantiative and that we have multiple predictor variable(both quantitative and categorial), we believe multiple linear regression model is the most suitable regression model. Because it can handle multiple predictors simultaneously and quantify the impact of each predictor on the revenue.
+Given that our response variable is quantiative and that we have multiple predictor variables (both quantitative and categorial), we believe a **multiple linear regression model** is the most suitable regression model for answering our research question. This type of model can handle multiple predictors simultaneously and quantify the impact of each predictor on the revenue efficiently.
