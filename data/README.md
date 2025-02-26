@@ -1,7 +1,6 @@
 # Data
 
-**\
-Published on**
+**Published on**
 
 [Kaggle](https://www.kaggle.com/datasets/anandshaw2001/imdb-data/data)
 
@@ -11,11 +10,11 @@ Anand Shaw
 
 **Sources**
 
-Data collected from the IMDb site which provides a comprehensive movies.
+IMDb website 
 
 **Collection Methodology**
 
-sites
+Data collected from IMDb website, which provides a comprehensive list of movies
 
 ## Imdb Movie New Data_v2.csv
 

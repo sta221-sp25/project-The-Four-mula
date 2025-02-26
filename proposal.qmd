@@ -19,11 +19,11 @@ imdb_data <- read_csv("data/Imdb Movie New Data_v2.csv")
 
 ## Introduction
 
-As a group, we decided to explore several metrics related to movie revenues in hope to understand what contributes to a movie's overall success. We chose revenue as our success metric, as this is the most popular measurement of a movie's success in other academic work, therefore allowing our analysis to complement existing literature. A movie’s revenue is defined as the total amount of money a given movie makes from ticket sales, and is influenced by a wealth of factors, several of which we will explore in our analysis. Given our goal of determining what factors contribute most to a movies success, our leading research question is:
+As a group, we decided to explore several metrics related to IMDb movie revenues to understand what contributes to a movie's overall box office success. We chose revenue as our success metric, as this is the most popular measurement of a movie's success in other academic work, therefore allowing our analysis to complement existing literature. A movie’s revenue is defined as the total amount of money a given movie makes from ticket sales, and is influenced by a wealth of factors, several of which we will explore in our analysis. Given our goal of determining what factors contribute most to a movies success, our leading research question is:
 
 **What factors in a movie's production and release have the greatest impact on its total revenue?**
 
-We chose this research question because in determining what contributes to a movie's revenue, we can gain the necessary understanding to predict how certain movies will do based on our predictors. We predict that the factor that will have the greatest influence on total revenue will be budget, as a movie's budget likely contributes to several other influential factors such as the actors featured in the movies, the investment in marketing the movie before its release, and the overall quality of the film.
+We chose this research question because in determining what contributes to a movie's revenue, we can gain the necessary understanding to predict how certain movies will do based on various factors. We predict that the factor that will have the greatest influence on total revenue will be budget, as a movie's budget likely contributes to several other influential aspects of a movie such as the actors featured in the movies, the investment in marketing the movie before its release, and the overall quality of the film.
 
 \pagebreak
 
@@ -31,9 +31,9 @@ We chose this research question because in determining what contributes to a mov
 
 We obtained this data set from [Kaggle](https://www.kaggle.com/), an online data science platform with a collection of community-developed open data sets. Here is the [link](https://www.kaggle.com/datasets/anandshaw2001/imdb-data) to where we found the data.
 
-This data was collected by **Anand Shaw** from the **IMDb website** using sites, and converted into a .csv file. The data was updated on a daily basis until 2 months ago.
+This data was collected by **Anand Shaw** from the **IMDb website** using various IMDb sites, and converted into a .csv file. The data was updated on a daily basis until 2 months ago.
 
-This data set collects information available on the IMDb website for different movies, such that each observation is some characteristics of a specific movie. It measures the following **15 characteristics** per movie:
+This data set collects information available on the IMDb website for different movies, such that each observation describes characteristics of a specific movie. In general, the characters being measured follow basic information about the movie, various classifications of the movie's popularity and rating, and the monetary values associated with the movie. It measures the following **15 characteristics** per movie:
 
 `title`: The name of the movie.
 
@@ -71,19 +71,17 @@ This data set collects information available on the IMDb website for different m
 glimpse(imdb_data)
 ```
 
-Due to the large size of the original data set, for the purpose of uploading this to our repository, we dropped 6 characteristics (`id`, `original_title`, `tagline`, `production_companies`, `overview`, `keyword`) from the data set due to their redundancy, irrelevance to the research question and presence of a significant number of null values. So, our data set now contains **20** **variables**.
+Due to the large size of the original data set, for the purpose of uploading this to our repository, we dropped 6 characteristics (`id`, `original_title`, `tagline`, `production_companies`, `overview`, `keyword`) from the data set due to their redundancy, irrelevance to the research question and presence of a significant number of null values. Thus, our data set now contains **20** **variables**.
 
 \pagebreak
 
 ## Data processing
 
-For the following Imdb movies data set, to prepare the data set for analysis, first, we need to consider missing data values within the dataset, eliminating observations that are incomplete across our predictor/response variables and filtering out movies that haven't yet been released. The majority of these missing values appear in variables that aren't relevant to our regression analysis, however, we still need to account for missing values in our predictor variables.
+For the following IMDb movies data set, to prepare the data set for analysis, first, we need to consider missing data values within the dataset, eliminating observations that are incomplete across our predictor/response variables and filtering out movies that haven't yet been released. The majority of these missing values appear in variables that aren't relevant to our regression analysis, however, we still need to account for missing values in our predictor variables.
 
 Furthermore, we need to check for data inconsistencies in the quantitative variables by analyzing the summary statistics for the predictor variables and noting whether there are extreme outliers that are improbable (quantitative variables with an unreasonable value of 0 or negative values). For ease of interpretation, we might scale some quantitative variables, such as revenue and budget scaled in millions of dollars.
 
-In addition, our categorical predictors, such as adult and original language, need to be converted to factors to allow us to use them in our regression analysis.
-
-A possible consideration for our data set in the data processing phase is to filter the data set for more recent IMDb movies to gain a better and more representative understanding of recent IMDb movie revenues.
+In addition, our dataset requires a transformation across a few of the variables to ensure that these predictors can be used in the regression analysis. For example, our categorical predictors, such as adult and original language, need to be converted to factors. Furthermore, the release year needs to be extracted from the release_date variable to create a new quantitative variable that analyzes the number of years the movie has been released since the present year (2025). 
 
 ```{r}
 summary(imdb_data$revenue)
@@ -114,15 +112,15 @@ imdb_data %>%
   scale_x_continuous(limits = c(0, 10000000))
 ```
 
-From the summary statistics, it is observable that the majority of these revenue values are unknown values (represented by 0), as the 1st quartile, median, and 3rd quartile are all 0 dollars. Thus, to obtain representative visualizations of the distribution of the revenue response variable, we analyze Imdb movies that have a revenue greater than 0 (non-missing values in this data set).
+From the summary statistics, it is observable that the majority of these revenue values are unknown values (represented by 0), as the 1st quartile, median, and 3rd quartile are all 0 dollars. Thus, to obtain representative visualizations of the distribution of the revenue response variable, we analyze IMDb movies that have a revenue greater than 0 (non-missing values in this data set).
 
-The visualizations describe that the distribution of Imdb movie revenue is heavily right-skewed and unimodal, indiciating that there are various outliers in Imdb movies that generate significantly higher revenues. For the purpose of creating meaningful visualizations, we omitted Imdb movie revenues that are greater than 100,000,000 dollars for the histogram and greater than 10,000,000 dollars for the boxplot. Furthermore, the distribution of Imdb movie revenues has a center of approximately 1,818,000 dollars, described by the median, and a spread of approximately 18,616,000 dollars, described by the interquartile range. There are multiple outliers in the dataset for Imdb movie revenue greater than approximately 5,000,000 dollars, as shown in the boxplot visualization, as a few Imdb movies have significantly higher generated revenues. The majority of Imdb movies generate between approximately 0 and 2,000,000 dollars in revenue.
+The visualizations describe that the distribution of IMDb movie revenue is heavily right-skewed and unimodal, indiciating that there are various outliers in IMDb movies that generate significantly higher revenues. For the purpose of creating meaningful visualizations, we omitted IMDb movie revenues that are greater than 100,000,000 dollars for the histogram and greater than 10,000,000 dollars for the boxplot. Furthermore, the distribution of IMDb movie revenues has a center of approximately 1,818,000 dollars, described by the median, and a spread of approximately 18,616,000 dollars, described by the interquartile range. There are multiple outliers in the dataset for IMDb movie revenue greater than approximately 5,000,000 dollars, as shown in the boxplot visualization, as a few IMDb movies have significantly higher generated revenues. The majority of IMDb movies generate between approximately 0 and 2,000,000 dollars in revenue.
 
 \pagebreak
 
 ## Analysis Approach
 
-Given the information provided by the data set, we are interested in investigating what factors contribute most to the movie revenue (`revenue`) of all IMDb movies to provide more insight into recent trends in the movie industry. This could help explore how producers and directors can maximize their revenue with every movie they work on. Some potential predictor variables of interest include:
+Given the information provided by the data set, we are interested in investigating what factors contribute most to the movie revenue (`revenue`) of IMDb movies to provide more insight into recent trends in the movie industry. This could help us understand how producers and directors can maximize their revenue with every movie they work on. Some potential predictor variables of interest include:
 
 -   `vote_average`: The average rating the movie has received from users, on a scale from 0-10 can help us understand how popularity within users influence movie revenue
 
