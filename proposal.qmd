@@ -81,7 +81,7 @@ For the following IMDb movies data set, to prepare the data set for analysis, fi
 
 Furthermore, we need to check for data inconsistencies in the quantitative variables by analyzing the summary statistics for the predictor variables and noting whether there are extreme outliers that are improbable (quantitative variables with an unreasonable value of 0 or negative values). For ease of interpretation, we might scale some quantitative variables, such as revenue and budget scaled in millions of dollars.
 
-In addition, our dataset requires a transformation across a few of the variables to ensure that these predictors can be used in the regression analysis. For example, our categorical predictors, such as adult and original language, need to be converted to factors. Furthermore, the release year needs to be extracted from the release_date variable to create a new quantitative variable that analyzes the number of years the movie has been released since the present year (2025). 
+In addition, our dataset requires a transformation across a few of the variables to ensure that these predictors can be used in the regression analysis. For example, our categorical predictors, such as adult and original language, need to be converted to factors. Furthermore, the release year needs to be extracted from the release_date variable to create a new quantitative variable that analyzes the number of years the movie has been released since the present year (2025).
 
 ```{r}
 summary(imdb_data$revenue)
@@ -138,4 +138,4 @@ Given the information provided by the data set, we are interested in investigati
 
 -   `genres`: movie genre might also influence movie revenue. For instance, some genres might appeal to younger and older audiences alike, generating more revenue.
 
-Given that our response variable is quantiative and that we have multiple predictor variables (both quantitative and categorial), we believe a **multiple linear regression model** is the most suitable regression model for answering our research question. This type of model can handle multiple predictors simultaneously and quantify the impact of each predictor on the revenue efficiently.
+Given that our response variable is quantitative and that we have multiple predictor variables (both quantitative and categorical), we believe a **multiple linear regression model** is the most suitable regression model for answering our research question. This type of model can handle multiple predictors simultaneously and quantify the impact of each predictor on the revenue efficiently.
