@@ -10,6 +10,10 @@ execute:
 editor: visual
 ---
 
+## Introduction 
+
+
+
 ```{r}
 #| label: load packages and data
 
@@ -17,6 +21,23 @@ library(tidyverse)
 library(tidymodels)
 
 imdb_data <- read_csv("data/Imdb Movie New Data_v2.csv")
+```
+
+```{r}
+imdb_data_cleaned <- imdb_data %>% 
+  filter(revenue > 0) %>% 
+  mutate(log_revenue = log(revenue)) 
+summary(imdb_data_cleaned$log_revenue)
+```
+
+```{r}
+imdb_data_cleaned %>% 
+  ggplot(mapping = aes(x = log_revenue)) + 
+  geom_histogram() + 
+  labs(title = "Distribution of Log-Transformed IMDb Movie Revenue", 
+       x = "Total Log Transformed Revenue (USD)", 
+       y = "Count") + 
+  theme(plot.title = element_text(size = 10))
 ```
 
 Your written report goes here!
