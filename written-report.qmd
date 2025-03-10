@@ -1,7 +1,7 @@
 ---
-title: "Your project title"
-author: "Team Name: Team member 1, Team member 2, Team member 3, Team member 4"
-date: "Update date"
+title: "Analysis of IMDb Movie Revenue"
+author: "The Four-mula: Hellen Han, Lila Rogers, Amy Duan, Eva Aggarwal"
+date: "3/20/2025"
 format: pdf
 execute: 
   warning: false
@@ -13,6 +13,10 @@ editor: visual
 ```{r}
 #| label: load packages and data
 
+library(tidyverse)
+library(tidymodels)
+
+imdb_data <- read_csv("data/Imdb Movie New Data_v2.csv")
 ```
 
 Your written report goes here!
