@@ -10,12 +10,8 @@ execute:
 editor: visual
 ---
 
-## Introduction 
-
-
-
 ```{r}
-#| label: load packages and data
+#| label: load-packages-and-data
 
 library(tidyverse)
 library(tidymodels)
@@ -24,24 +20,86 @@ imdb_data <- read_csv("data/Imdb Movie New Data_v2.csv")
 ```
 
 ```{r}
+#| label: cleaning-data
+
+#creating new variable for number of years released since 2000 
 imdb_data_cleaned <- imdb_data %>% 
-  filter(revenue > 0) %>% 
-  mutate(log_revenue = log(revenue)) 
+  mutate(release_date = as.Date(release_date, format = "%m/%d/%y")) %>% 
+  mutate(release_year = year(release_date), 
+         release_month = month(release_date), 
+         release_day = day(release_date)) %>% 
+  filter(release_year >= 2000 & release_year <= 2025) %>% 
+  mutate(release_years_since_2000 = release_year - 2000) 
+
+#log transformation of revenue and budget 
+imdb_data_cleaned <- imdb_data_cleaned %>% 
+  filter(revenue > 0 & budget > 0) %>% 
+  mutate(log_revenue = log(revenue)) %>% 
+  mutate(log_budget = log(budget)) 
+
+```
+
+## Introduction:
+
+## Exploratory Data Analysis: 
+
+To obtain informative interpretations of the distribution of the revenue response variable, we analyze IMDb movies released from 2000 and beyond that have a revenue greater than 0 (non-missing values in this dataset). Furthermore, we log transform revenue, as the revenue generated across the IMDb movies is heavily right-skewed. (hellen could you include this in the description of the variables section, maybe write a short blurb for log transformation of log transformation for budget too). 
+
+##### Univariate EDA 
+
+```{r}
 summary(imdb_data_cleaned$log_revenue)
 ```
 
 ```{r}
 imdb_data_cleaned %>% 
   ggplot(mapping = aes(x = log_revenue)) + 
-  geom_histogram() + 
+  geom_histogram(fill = "lightblue") + 
   labs(title = "Distribution of Log-Transformed IMDb Movie Revenue", 
        x = "Total Log Transformed Revenue (USD)", 
-       y = "Count") + 
+       y = "Frequency") + 
   theme(plot.title = element_text(size = 10))
 ```
 
-Your written report goes here!
+The histogram shows the distribution of the log transformed IMDb movie revenues response variable, which is left-skewed and unimodal, indicating that on average, movies listed on IMDb tend to generate higher revenues. Furthermore, the distribution of the log transformed IMDb movie revenues has a center of approximately 1,800,000 US dollars, described by the median, and a spread of approximately 18,600,000 US dollars, described by the interquartile range. The majority of IMDb movies generate between approximately 24,100 and 18,600,000 US dollars. 
+
+```{r}
+summary(imdb_data_cleaned$log_budget) 
+```
+
+```{r}
+imdb_data_cleaned %>% 
+  ggplot(mapping = aes(x = log_budget)) + 
+  geom_histogram(fill = "lightblue") + 
+  labs(title = "Distribution of Log-Transformed IMDb Movie Budget", 
+       x = "Total Log Transformed Budget (USD)", 
+       y = "Frequency") + 
+  theme(plot.title = element_text(size = 10)) 
+```
+
+The histogram shows the distribution of the log transformed IMDb movie budget predictor variable, which is left-skewed and unimodal, indicting that although IMDb movie budget varies greatly, on average, movies listed on IMDb tend to have higher budgets. Furthermore, the distribution of the log transformed IMDb movie budget has a center of approximately 5,000,000 US dollars, described by the median, and a spread of approximately 25,000,000 US dollars, described by the interquartile range. 
+
+```{r}
+imdb_data_cleaned %>% 
+  ggplot(mapping = aes(x = vote_average)) + 
+  geom_boxplot() + 
+  labs(title = "Distribution of IMDb Average Rating", 
+       x = "Average Rating (0-10)") + 
+  theme(plot.title = element_text(size = 10),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank()) 
+```
+
+The majority of IMDb movies' average ratings are concentrated between a rating of 4.0 to 8.0. A few IMDb movies have a low rating (average rating below 2.5), contributing to the left-skewness of the distribution of IMDb movies' average rating predictor variable. Furthermore, a few IMDb movies have an extremely high rating (average rating of 10.0). 
+
+
+##### Bivariate EDA
+
+
+##### Potential Interaction Effects
+
 
 ::: callout-important
 Before you submit, make sure your code chunks are turned off with `echo: false` and there are no warnings or messages with `warning: false` and `message: false` in the YAML.
 :::
+
