@@ -43,11 +43,13 @@ imdb_data_cleaned <- imdb_data_cleaned %>%
 
 This project aims to examine key factors influencing IMDb movie revenues to understand what drives box office success. Revenue, the most widely used measure of success in the film industry, reflects audience demand and commercial viability. Prior research has highlighted various influences, such as star power, genre, and marketing, but the relative importance of these factors remains debated.
 
-Our central research question is: **What production and release factors have the greatest impact on a movie's total revenue?** By addressing this question, we aim to deepen the understanding of revenue drivers and improve predictive models for box office performance.
+One central research question our project aims to answer is: **What production and release factors have the greatest impact on a movie's total revenue?** By addressing this question, we aim to deepen the understanding of revenue drivers and improve predictive models for box office performance.
 
-We obtained [this data set](https://www.kaggle.com/datasets/anandshaw2001/imdb-data) from [Kaggle](https://www.kaggle.com/), an online data science platform with a collection of community-developed open data sets. This data was collected by **Anand Shaw** from the **IMDb website** using various IMDb sites, and converted into a .csv file. The data was updated on a daily basis until 2 months ago.
+We obtained our data set from [Kaggle](https://www.kaggle.com/), an online data science platform with a collection of community-developed open data sets. This data was collected by **Anand Shaw** from the **IMDb website** using various IMDb sites, and converted into a .csv file. The data was updated on a daily basis until 2 months ago.
 
-This data set collects information available on the IMDb website for different movies, such that each observation describes characteristics of a specific movie. In general, the characters being measured follow basic information about the movie, various classifications of the movie's popularity and rating, and the monetary values associated with the movie. It measures the following **15 characteristics** per movie:
+## Exploratory Data Analysis:
+
+To get more indepth into our data set, [the data set](https://www.kaggle.com/datasets/anandshaw2001/imdb-data) we used collects information available on the IMDb website for different movies, such that each observation describes characteristics of a specific movie. In general, the characters being measured follow basic information about the movie, various classifications of the movie's popularity and rating, and the monetary values associated with the movie. It measures the following **15 characteristics** per movie:
 
 `title`: The name of the movie.
 
@@ -79,9 +81,7 @@ This data set collects information available on the IMDb website for different m
 
 `spoken_languages`: The languages spoken in the movie.
 
-Due to the large size of the original data set, for the purpose of uploading this to our repository, we intentionally drop some characteristics, including `id`, `original_title`, `tagline`, `production_companies`, `overview`, `keyword` from the data set due to their redundancy, irrelevance to the research question and presence of a significant number of null values.
-
-## Exploratory Data Analysis:
+Due to the large size of the original data set and for the purpose of uploading this to our repository, we intentionally drop some characteristics, including `id`, `original_title`, `tagline`, `production_companies`, `overview`, `keyword` from the data set due to their redundancy, irrelevance to the research question and presence of a significant number of null values.
 
 To obtain informative interpretations of the distribution of the revenue response variable, we analyze IMDb movies released from 2000 and beyond that have a revenue greater than 0 (non-missing values in this dataset). Furthermore, we log transform revenue, as the revenue generated across the IMDb movies is heavily right-skewed. (hellen could you include this in the description of the variables section, maybe write a short blurb for log transformation of log transformation for budget too).
 
