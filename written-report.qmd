@@ -41,6 +41,46 @@ imdb_data_cleaned <- imdb_data_cleaned %>%
 
 ## Introduction:
 
+This project aims to examine key factors influencing IMDb movie revenues to understand what drives box office success. Revenue, the most widely used measure of success in the film industry, reflects audience demand and commercial viability. Prior research has highlighted various influences, such as star power, genre, and marketing, but the relative importance of these factors remains debated.
+
+Our central research question is: **What production and release factors have the greatest impact on a movie's total revenue?** By addressing this question, we aim to deepen the understanding of revenue drivers and improve predictive models for box office performance.
+
+We obtained [this data set](https://www.kaggle.com/datasets/anandshaw2001/imdb-data) from [Kaggle](https://www.kaggle.com/), an online data science platform with a collection of community-developed open data sets. This data was collected by **Anand Shaw** from the **IMDb website** using various IMDb sites, and converted into a .csv file. The data was updated on a daily basis until 2 months ago.
+
+This data set collects information available on the IMDb website for different movies, such that each observation describes characteristics of a specific movie. In general, the characters being measured follow basic information about the movie, various classifications of the movie's popularity and rating, and the monetary values associated with the movie. It measures the following **15 characteristics** per movie:
+
+`title`: The name of the movie.
+
+`vote_average`: The average rating the movie has received from users (on a scale, typically from 0 to 10).
+
+`vote_count`: The total number of votes or ratings submitted for the movie.
+
+`status`: The current state of the movie (e.g., "Released," "Post-Production").
+
+`release_date`: The date when the movie was officially released.
+
+`revenue`: The total earnings the movie made (usually in USD).
+
+`runtime`: The duration of the movie in minutes.
+
+`adult`: Indicates whether the movie is classified as adult content (e.g., "True" or "False").
+
+`budget`: The total cost of producing the movie (usually in USD).
+
+`imdb_id`: The unique identifier for the movie on IMDb (Internet Movie Database).
+
+`original_language`: The language in which the movie was originally produced (e.g., "en" for English).
+
+`popularity`: A metric indicating how popular the movie is (typically based on views, searches, or ratings).
+
+`genres`: The categories or genres the movie belongs to (e.g., Action, Comedy, Drama).
+
+`production_countries`: The countries where the movie was produced.
+
+`spoken_languages`: The languages spoken in the movie.
+
+Due to the large size of the original data set, for the purpose of uploading this to our repository, we intentionally drop some characteristics, including `id`, `original_title`, `tagline`, `production_companies`, `overview`, `keyword` from the data set due to their redundancy, irrelevance to the research question and presence of a significant number of null values.
+
 ## Exploratory Data Analysis:
 
 To obtain informative interpretations of the distribution of the revenue response variable, we analyze IMDb movies released from 2000 and beyond that have a revenue greater than 0 (non-missing values in this dataset). Furthermore, we log transform revenue, as the revenue generated across the IMDb movies is heavily right-skewed. (hellen could you include this in the description of the variables section, maybe write a short blurb for log transformation of log transformation for budget too).
@@ -109,7 +149,7 @@ summary(revenue_budget_model)$r.squared
 
 ```
 
-From our visualization plotting the log of movie revenue versus the log of movie budget as well as our relativley high r-squared value associated with a linear regression model, we can identify that there is a strong linear correlation between log of movie revenue and log of movie budget. Our p-value is effectively 0, further exemplifying that there is a linera relationship. We expected this, as high budget movies are often more anticipated and therefore more people buy tickets. Because our data set is so large, we decied to also display this relationship using a smoother scatter visualization, which illustrates point density seen in our scatter plot. 
+From our visualization plotting the log of movie revenue versus the log of movie budget as well as our relativley high r-squared value associated with a linear regression model, we can identify that there is a strong linear correlation between log of movie revenue and log of movie budget. Our p-value is effectively 0, further exemplifying that there is a linera relationship. We expected this, as high budget movies are often more anticipated and therefore more people buy tickets. Because our data set is so large, we decied to also display this relationship using a smoother scatter visualization, which illustrates point density seen in our scatter plot.
 
 ```{r}
 imdb_data_cleaned <- imdb_data_cleaned %>%
@@ -131,8 +171,7 @@ imdb_data_cleaned |>
 
 ```
 
-In this visualization, we transformed the vote_average variable into a categorical variable taking levels "Low" for ratings 0-3, "Medium" for ratings 3-7, and "High" for ratings 7-10. From our boxplot, we can see that the median log revenue for Medium rated movies (around 16) is actually slightly higher than those with High ratings (15.5). The median log revenue for Low rated movies is significantly lower (6). The IQR of movies with high ratings is also much larger than for Medium and Low rated movies. 
-##### Potential Interaction Effects
+In this visualization, we transformed the vote_average variable into a categorical variable taking levels "Low" for ratings 0-3, "Medium" for ratings 3-7, and "High" for ratings 7-10. From our boxplot, we can see that the median log revenue for Medium rated movies (around 16) is actually slightly higher than those with High ratings (15.5). The median log revenue for Low rated movies is significantly lower (6). The IQR of movies with high ratings is also much larger than for Medium and Low rated movies. \##### Potential Interaction Effects
 
 ::: callout-important
 Before you submit, make sure your code chunks are turned off with `echo: false` and there are no warnings or messages with `warning: false` and `message: false` in the YAML.
