@@ -15,6 +15,8 @@ editor: visual
 
 library(tidyverse)
 library(tidymodels)
+library(corrplot)
+library(GGally)
 
 imdb_data <- read_csv("data/Imdb Movie New Data_v2.csv")
 ```
@@ -174,6 +176,33 @@ imdb_data_cleaned |>
 In this visualization, we transformed the vote_average variable into a categorical variable taking levels "Low" for ratings 0-3, "Medium" for ratings 3-7, and "High" for ratings 7-10. From our boxplot, we can see that the median log revenue for Medium rated movies (around 16) is actually slightly higher than those with High ratings (15.5). The median log revenue for Low rated movies is significantly lower (6). The IQR of movies with high ratings is also much larger than for Medium and Low rated movies.
 
 ##### Potential Interaction Effects
+
+Budget and Popularity —\>
+
+```{r}
+budget_pop_fit <- lm(revenue ~ budget * popularity, data = imdb_data_cleaned)
+tidy(budget_pop_fit)
+```
+
+```{r}
+vote_avg_count_fit <- lm(revenue ~ vote_average * vote_count, data = imdb_data_cleaned)
+tidy(vote_avg_count_fit)
+```
+
+```{r}
+imdb_data_cleaned <- imdb_data_cleaned |>
+  mutate(is_adult = case_when(adult == "True" ~ 1,
+                              TRUE ~ 0))
+
+adult_vote_count_fit <- lm(revenue ~ is_adult * vote_count, data = imdb_data_cleaned)
+tidy(adult_vote_count_fit)
+```
+
+```{r}
+imdb_data_cleaned |>
+  select(budget, runtime, popularity, vote_average) |>
+  ggpairs()
+```
 
 ::: callout-important
 Before you submit, make sure your code chunks are turned off with `echo: false` and there are no warnings or messages with `warning: false` and `message: false` in the YAML.
