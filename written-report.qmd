@@ -14,6 +14,7 @@ editor: visual
 #| label: load-packages-and-data
 
 library(tidyverse)
+library(knitr)
 library(tidymodels)
 library(corrplot)
 library(GGally)
@@ -177,26 +178,43 @@ In this visualization, we transformed the vote_average variable into a categoric
 
 ##### Potential Interaction Effects
 
-Budget and Popularity —\>
+To check interaction effects between some of our predictors to ensure we don't have issues with multicollinearity in our models, we checked interaction effects between some variables that are likely to have some collinearity. For 3 pairs of predictor variables, we fit an interaction model with revenue as the response variable to see if there is a statistically significant impact of the interaction term on the model.
+
+**Budget and Popularity**
+
+Budget and popularity are likely to have interaction effects because higher-budget movies often receive more marketing, leading to increased visibility and higher popularity. However, the p-value for the interaction term (budget:popularity) is 0.48, indicating that the effect is not statistically significant at the 0.05 level, meaning budget’s impact on revenue does not significantly change based on popularity.
 
 ```{r}
 budget_pop_fit <- lm(revenue ~ budget * popularity, data = imdb_data_cleaned)
-tidy(budget_pop_fit)
+tidy(budget_pop_fit) |>
+  kable(digits = 3)
 ```
+
+**Vote Average and Vote Count**
+
+Since movies with higher vote counts often also have higher vote averages, there could be a multiplicative effect on revenue. If an interaction is present, it means that vote count alone does not fully explain revenue—its impact depends on the vote average. And, the p-value for the interaction term (vote_average:vote_count) is 2.331652e-45, indicating that the effect is extremely significant at the 0.05 level, meaning there is very strong evidence that the relationship between vote count and revenue depends on the vote average. So, there is a very strong interaction effect between these two variables.
 
 ```{r}
 vote_avg_count_fit <- lm(revenue ~ vote_average * vote_count, data = imdb_data_cleaned)
-tidy(vote_avg_count_fit)
+tidy(vote_avg_count_fit) |>
+  kable(digits = 3)
 ```
+
+**Action Movies and Runtime**
+
+Action movies have longer runtimes typically compared to other genres due to storytelling, long fight sequences, and action scenes. We thought that there may be an interaction effect between being an action movie and runtime when predicting revenue. Longer runtimes could allow for larger audiences and increasing box office earnings. However, excessively long movies may also reduce viewers due to time constraints. However, from the p-value of the interaction term, which is 2.991935e-15, we can see that this term is quite significant at the 0.05 level. This implies that there is some interaction between a movie having the 'action' genre and longer runtimes, or the effect of runtime on revenue is different for action movies compared to non-action movies. This could suggest that longer runtimes contribute positively to revenue for action films, possibly because audiences expect more elaborate fight sequences and storytelling in the genre, making them more willing to engage with longer films.
 
 ```{r}
 imdb_data_cleaned <- imdb_data_cleaned |>
-  mutate(is_adult = case_when(adult == "True" ~ 1,
+  mutate(action_movie = case_when(str_detect(genres, "Action") ~ 1,
                               TRUE ~ 0))
 
-adult_vote_count_fit <- lm(revenue ~ is_adult * vote_count, data = imdb_data_cleaned)
-tidy(adult_vote_count_fit)
+action_runtime_fit <- lm(revenue ~ action_movie * runtime, data = imdb_data_cleaned)
+tidy(action_runtime_fit) |>
+  kable(digits = 3)
 ```
+
+We also explored the correlation between all possible combinations of the variables budget, runtime, popularity and vote_average, to see how they interact with each other. The results indicate that the correlations between these variables are relatively low, with none exceeding 0.310. This suggests that there is no strong linear relationship between them, reducing the likelihood of multicollinearity issues when including these variables in a predictive model. As a result, we can confidently incorporate them into our analysis.
 
 ```{r}
 imdb_data_cleaned |>
