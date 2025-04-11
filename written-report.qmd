@@ -18,6 +18,7 @@ library(knitr)
 library(tidymodels)
 library(corrplot)
 library(GGally)
+library(car)
 
 imdb_data <- read_csv("data/Imdb Movie New Data_v2.csv")
 ```
@@ -229,9 +230,9 @@ imdb_data_cleaned |>
   ggpairs()
 ```
 
-### Methodology/Final Model 
+### Methodology/Final Model
 
-With the EDA analysis done above, we decided to first fit Models 1-7 with individual predictors, including the average rating, movie production status, runtime length, adult movie status, log-transformed budget, popularity rating, and action movie status. 
+With the EDA analysis done above, we decided to first fit Models 1-7 with individual predictors, including the average rating, movie production status, runtime length, adult movie status, log-transformed budget, popularity rating, and action movie status.
 
 **Testing Single Variables**
 
@@ -259,7 +260,7 @@ tidy(m6) |>
 
 ```
 
-Given that the p-value for each of these individual predictors is less than 0, we can resonably conclude that there is a significant linear relationship between each of these individual predictors and the log-transformed revenue. 
+Given that the p-value for each of these individual predictors is less than 0, we can resonably conclude that there is a significant linear relationship between each of these individual predictors and the log-transformed revenue.
 
 **Final Model**
 
@@ -303,7 +304,7 @@ BIC
 vif(m9)
 ```
 
-Model 2 outperforms Model 1 on both key metrics. Model 2 has a slightly lower RMSE, indicating better predictive accuracy, and a higher adjusted R-squared value, indicating a better fit and more variance explained by the model. Furthermore, since Model 2 has slightly lower AIC and BIC values, we select Model 2 as the better model. However, looking at the VIF values for the predictors in Model 2, popularity and the interaction term between the log-transformed budget and popularity have extremely high VIF values, thus indicating a multicollinearity issue such that these predictors provide redundant information or they are highly linear dependent/related. Thus, to address this issue, we mean center popularity and log-transformed budget to transform thse predictors and reduce the VIF to create Model 3. 
+Model 2 outperforms Model 1 on both key metrics. Model 2 has a slightly lower RMSE, indicating better predictive accuracy, and a higher adjusted R-squared value, indicating a better fit and more variance explained by the model. Furthermore, since Model 2 has slightly lower AIC and BIC values, we select Model 2 as the better model. However, looking at the VIF values for the predictors in Model 2, popularity and the interaction term between the log-transformed budget and popularity have extremely high VIF values, thus indicating a multicollinearity issue such that these predictors provide redundant information or they are highly linear dependent/related. Thus, to address this issue, we mean center popularity and log-transformed budget to transform thse predictors and reduce the VIF to create Model 3.
 
 ```{r}
 imdb_data_cleaned <- imdb_data_cleaned %>% 
@@ -329,7 +330,7 @@ BIC
 vif(m10)
 ```
 
-Model 3 performs the same as Model 2 across all key metrics, including RMSE, R-squared, and AIC/BIC. However, looking at the VIF values for the predictors in Model 3, popularity and the interaction term between the log-transformed budget and popularity have significantly lower VIF values. Although the VIF values still exceed the threshold of 10, indiciating potential multicollinearity concern, it's crucial to understand the context behind the interaction term, as it is both theoretically justified and statistically significant, improving the model's predictive power overall. 
+Model 3 performs the same as Model 2 across all key metrics, including RMSE, R-squared, and AIC/BIC. However, looking at the VIF values for the predictors in Model 3, popularity and the interaction term between the log-transformed budget and popularity have significantly lower VIF values. Although the VIF values still exceed the threshold of 10, indiciating potential multicollinearity concern, it's crucial to understand the context behind the interaction term, as it is both theoretically justified and statistically significant, improving the model's predictive power overall.
 
 Thus, our final model is reflected by Model 3.
 
@@ -340,7 +341,25 @@ tidy(m10) %>%
 
 ### Results
 
-Describe the key results from the model. The goal is not to interpret every single variable in the model but rather to show that you are proficient in using the model output to address the research questions, using the interpretations to support your conclusions. Focus on the variables that help you answer the research question and that provide relevant context for the reader.
+Our final model (Model 3) provides valuable insights into which factors most strongly influence a movie's box office revenue on IMDb. This model included the following predictors: average user rating (vote_average), movie runtime, adult movie status, log-transformed budget (mean-centered), popularity (mean-centered), and an interaction term between the centered log-budget and popularity.
+
+The model explains approximately 66.9% of the variability in log-transformed revenue, as reflected by the adjusted R-squared value of 0.669. The RMSE of the model was approximately 1.765, indicating relatively low residual error on a log scale.
+
+Several predictors emerged as statistically significant contributors:
+
+-   Vote Average: A one-unit increase in average IMDb rating is associated with an increase in log-revenue, holding other factors constant. This supports our hypothesis that higher-rated movies tend to generate more revenue.
+
+-   Log-Budget (Mean-Centered): As expected, budget is a significant predictor of revenue, with higher-budget films tending to yield higher box office earnings. This aligns with industry trends where more resources generally enable wider distribution, better production value, and stronger marketing.
+
+-   Popularity (Mean-Centered): Popularity, which proxies online engagement, also significantly predicts higher revenue. This suggests a strong link between digital attention and commercial performance.
+
+-   Interaction between Log-Budget and Popularity: The positive and significant interaction term indicates that the effect of popularity on revenue is stronger for high-budget movies. In other words, popularity boosts revenue more when a movie also has a large budget — possibly because high-budget movies can better capitalize on attention through marketing and distribution.
+
+-   Runtime: Runtime also showed a small but significant positive effect, suggesting that longer movies may be associated with higher revenues, possibly due to being perceived as more substantive or event-like.
+
+-   Adult Status: While statistically significant, adult status had a relatively small negative effect on revenue, implying that non-adult films tend to generate more revenue — likely due to broader audience appeal.
+
+Overall, the model supports our hypothesis that budget, rating, and popularity are key predictors of movie revenue, and it additionally highlights the importance of interaction effects, particularly between budget and popularity.
 
 ### Discussion
 
