@@ -303,36 +303,38 @@ BIC
 vif(m9)
 ```
 
-```{r}
-imdb_data_cleaned %>% 
-  mutate(popularity_mc = popularity - mean(popularity),
-         log_budget_mc = log_budget_mc - mean(log_budget_mc))
+Model 2 outperforms Model 1 on both key metrics. Model 2 has a slightly lower RMSE, indicating better predictive accuracy, and a higher adjusted R-squared value, indicating a better fit and more variance explained by the model. Furthermore, since Model 2 has slightly lower AIC and BIC values, we select Model 2 as the better model. However, looking at the VIF values for the predictors in Model 2, popularity and the interaction term between the log-transformed budget and popularity have extremely high VIF values, thus indicating a multicollinearity issue such that these predictors provide redundant information or they are highly linear dependent/related. Thus, to address this issue, we mean center popularity and log-transformed budget to transform thse predictors and reduce the VIF to create Model 3. 
 
-m9 <- lm(log_revenue ~ vote_average + runtime + adult + log_budget_mc + popularity_mc + log_budget_mc * popularity_mc, data = imdb_data_cleaned)
-tidy(m9) |>
+```{r}
+imdb_data_cleaned <- imdb_data_cleaned %>% 
+  mutate(popularity_mc = popularity - mean(popularity),
+         log_budget_mc = log_budget - mean(log_budget))
+
+m10 <- lm(log_revenue ~ vote_average + runtime + adult + log_budget_mc + popularity_mc + log_budget_mc * popularity_mc, data = imdb_data_cleaned)
+tidy(m10) |>
   kable(digits = 3)
 
-rsq_m9 <- summary(m9)$adj.r.squared
-rsq_m9
+rsq_m10 <- summary(m9)$adj.r.squared
+rsq_m10
 
-rmse <- sqrt(mean(resid(m9)^2))
+rmse <- sqrt(mean(resid(m10)^2))
 rmse
 
-AIC <- glance(m9)$AIC
-BIC <- glance(m9)$BIC
+AIC <- glance(m10)$AIC
+BIC <- glance(m10)$BIC
 
 AIC
 BIC
 
-vif(m9)
+vif(m10)
 ```
 
-Model 2 outperforms Model 1 on both key metrics. Model 2 has a slightly lower RMSE, indicating better predictive accuracy, and a higher adjusted R-squared value, indicating a better fit and more variance explained by the model. Furthermore, since Model 2 has slightly lower AIC and BIC values, we select Model 2 as the better model. Looking at the VIF values for the predictors in Model 2, popularity and the interaction term between the log-transformed budget and popularity have extremely high VIF values, thus indicating a multicollinearity issue. However, the interaction term is statistically significant in the linear regression model and improves model performance. 
+Model 3 performs the same as Model 2 across all key metrics, including RMSE, R-squared, and AIC/BIC. However, looking at the VIF values for the predictors in Model 3, popularity and the interaction term between the log-transformed budget and popularity have significantly lower VIF values. Although the VIF values still exceed the threshold of 10, indiciating potential multicollinearity concern, it's crucial to understand the context behind the interaction term, as it is both theoretically justified and statistically significant, improving the model's predictive power overall. 
 
-Thus, our final model is reflected by 
+Thus, our final model is reflected by Model 3.
 
 ```{r}
-tidy(m9) %>% 
+tidy(m10) %>% 
   kable(digits = 3)
 ```
 
