@@ -51,7 +51,7 @@ One central research question our project aims to answer is: **What production a
 
 We obtained our data set from [Kaggle](https://www.kaggle.com/), an online data science platform with a collection of community-developed open data sets. This data was collected by **Anand Shaw** from the **IMDb website** using various IMDb sites, and converted into a .csv file. The data was updated on a daily basis until 2 months ago.
 
-## Exploratory Data Analysis:
+**Exploratory Data Analysis**
 
 To get more indepth into our data set, [the data set](https://www.kaggle.com/datasets/anandshaw2001/imdb-data) we used collects information available on the IMDb website for different movies, such that each observation describes characteristics of a specific movie. In general, the characters being measured follow basic information about the movie, various classifications of the movie's popularity and rating, and the monetary values associated with the movie. It measures the following **15 characteristics** per movie:
 
@@ -183,11 +183,11 @@ imdb_data_cleaned |>
 
 From our boxplot, we can see that the median revenue for Medium rated movies (approximately 8,880,000 dollars) is actually slightly higher than those with High ratings (approximately 5,400,000 dollars). The median revenue for Low rated movies is significantly lower (approximately 400 dollars). The IQR of movie revenues with High ratings is also much larger than for Medium and Low rated movies.
 
-##### Potential Interaction Effects
+**Potential Interaction Effects**
 
 To check interaction effects between some of our predictors to ensure we don't have issues with multicollinearity in our models, we checked interaction effects between some variables that are likely to have some collinearity. For 3 pairs of predictor variables, we fit an interaction model with revenue as the response variable to see if there is a statistically significant impact of the interaction term on the model.
 
-**Budget and Popularity**
+##### Budget and Popularity
 
 Budget and popularity are likely to have interaction effects because higher-budget movies often receive more marketing, leading to increased visibility and higher popularity. However, the p-value for the interaction term (budget:popularity) is 0.48, indicating that the effect is not statistically significant at the 0.05 level, meaning budget’s impact on revenue does not significantly change based on popularity.
 
@@ -197,7 +197,7 @@ tidy(budget_pop_fit) |>
   kable(digits = 3)
 ```
 
-**Vote Average and Vote Count**
+##### Vote Average and Vote Count
 
 Since movies with higher vote counts often also have higher vote averages, there could be a multiplicative effect on revenue. If an interaction is present, it means that vote count alone does not fully explain revenue — its impact depends on the vote average. And, the p-value for the interaction term (vote_average:vote_count) is 2.331652e-45, indicating that the effect is extremely significant at the 0.05 level, meaning there is very strong evidence that the relationship between vote count and revenue depends on the vote average. So, there is a very strong interaction effect between these two variables.
 
@@ -207,7 +207,7 @@ tidy(vote_avg_count_fit) |>
   kable(digits = 3)
 ```
 
-**Action Movies and Runtime**
+##### Action Movies and Runtime
 
 Action movies have longer runtimes typically compared to other genres due to storytelling, long fight sequences, and action scenes. We thought that there may be an interaction effect between being an action movie and runtime when predicting revenue. Longer runtimes could allow for larger audiences and increasing box office earnings. However, excessively long movies may also reduce viewers due to time constraints. However, from the p-value of the interaction term, which is 2.991935e-15, we can see that this term is quite significant at the 0.05 level. This implies that there is some interaction between a movie having the 'action' genre and longer runtimes, or the effect of runtime on revenue is different for action movies compared to non-action movies. This could suggest that longer runtimes contribute positively to revenue for action films, possibly because audiences expect more elaborate fight sequences and storytelling in the genre, making them more willing to engage with longer films.
 
@@ -264,10 +264,11 @@ Given that the p-value for each of these individual predictors is less than 0, w
 
 **Final Model**
 
-With the analysis done above, we decided to first fit a Model 1 with the significant individual predictors (average rating, movie production status, runtime length, adult movie status, log-transformed budget, popularity rating, and action movie status). Then, we want to compare to Model 2 where we modify the model to account for potential interaction effects. Furthermore, we remove the predictor for action movies in Model 2, as the predictor doesn't seem to be statistically significant in the context of the linear regression model in Model 1, as the p-value exceeds the threshold of 0.05.
+With the analysis done above, we decided to first fit a Model 1 with the significant individual predictors (average rating, movie production status, runtime length, adult movie status, log-transformed budget, popularity rating, and action movie status). Then, we want to compare to Model 2 where we modify the model to account for potential interaction effects that we explored in EDA. Furthermore, we remove the predictor for action movies in Model 2, as the predictor doesn't seem to be statistically significant in the context of the linear regression model in Model 1, as the p-value exceeds the threshold of 0.05.
 
 ```{r}
-m8 <- lm(log_revenue ~ vote_average + runtime + adult + log_budget + popularity + action_movie, data = imdb_data_cleaned)
+m8 <- lm(log_revenue ~ vote_average + runtime + adult + 
+           log_budget + popularity + action_movie, data = imdb_data_cleaned)
 tidy(m8) |>
   kable(digits = 3)
 
@@ -285,7 +286,9 @@ BIC
 ```
 
 ```{r}
-m9 <- lm(log_revenue ~ vote_average + runtime + adult + log_budget + popularity + log_budget * popularity, data = imdb_data_cleaned)
+m9 <- lm(log_revenue ~ vote_average + runtime + adult + 
+           log_budget + popularity + log_budget * popularity, 
+         data = imdb_data_cleaned)
 tidy(m9) |>
   kable(digits = 3)
 
@@ -311,7 +314,9 @@ imdb_data_cleaned <- imdb_data_cleaned %>%
   mutate(popularity_mc = popularity - mean(popularity),
          log_budget_mc = log_budget - mean(log_budget))
 
-m10 <- lm(log_revenue ~ vote_average + runtime + adult + log_budget_mc + popularity_mc + log_budget_mc * popularity_mc, data = imdb_data_cleaned)
+m10 <- lm(log_revenue ~ vote_average + runtime + adult + 
+            log_budget_mc + popularity_mc + log_budget_mc * popularity_mc, 
+          data = imdb_data_cleaned)
 tidy(m10) |>
   kable(digits = 3)
 
@@ -332,7 +337,11 @@ vif(m10)
 
 Model 3 performs the same as Model 2 across all key metrics, including RMSE, R-squared, and AIC/BIC. However, looking at the VIF values for the predictors in Model 3, popularity and the interaction term between the log-transformed budget and popularity have significantly lower VIF values. Although the VIF values still exceed the threshold of 10, indiciating potential multicollinearity concern, it's crucial to understand the context behind the interaction term, as it is both theoretically justified and statistically significant, improving the model's predictive power overall.
 
-Thus, our final model is reflected by Model 3.
+Thus, our final model is reflected by Model 3, which is:
+
+$$
+\begin{align*}\widehat{\log(\text{revenue})} &= \widehat{\beta}_0 + \widehat{\beta}_1 \cdot \text{vote average} + \widehat{\beta}_2 \cdot \text{runtime} + \widehat{\beta}_3 \cdot \text{adult} \\&\quad + \widehat{\beta}_4 \cdot \log\_budget\_mc + \widehat{\beta}_5 \cdot \text{popularity mc} \\&\quad + \widehat{\beta}_6 \cdot (\log\_budget\_mc \times \text{popularity mc})\end{align*}
+$$
 
 ```{r}
 tidy(m10) %>% 
@@ -363,13 +372,11 @@ Overall, the model supports our hypothesis that budget, rating, and popularity a
 
 ### Discussion
 
-From our analysis, we determined that 6 of the predictors tested are statistically significant in their influence on the revenue of an IMDB movie. However, we were especially interested in the impact of predictors "popularity" and its relationship to "budget". As we expected, there exists an interaction effect between the two predictors, as the popularity of a movie has a greater influence over the revenue when budget is higher. In practice, we could potentially account this to marketing strategies associated with high budget films. 
-In addition to our two predictors of speical interest, we also determined significance associated with "runtime" and "adult status". We chose to hold off further analysis on these factors because of their relatively small effect on revenue. One aspect of interest among these predictors, however, is the fact that "adult stats", a binary variable indicating whether or not a movie contains adult content, has a slight negative effect on revenue. This was the only negative effect we found. We hypothesize that this may be due to the limited group of viewers deemed as "appropriate" for these mature films. 
+From our analysis, we determined that 6 of the predictors tested are statistically significant in their influence on the revenue of an IMDB movie. However, we were especially interested in the impact of predictors "popularity" and its relationship to "budget". As we expected, there exists an interaction effect between the two predictors, as the popularity of a movie has a greater influence over the revenue when budget is higher. In practice, we could potentially account this to marketing strategies associated with high budget films. In addition to our two predictors of speical interest, we also determined significance associated with "runtime" and "adult status". We chose to hold off further analysis on these factors because of their relatively small effect on revenue. One aspect of interest among these predictors, however, is the fact that "adult stats", a binary variable indicating whether or not a movie contains adult content, has a slight negative effect on revenue. This was the only negative effect we found. We hypothesize that this may be due to the limited group of viewers deemed as "appropriate" for these mature films.
 
 In regards of our research question, inquiring about what factors most strongly influence a movie's box office revenue, our analysis indicates that runtime, adult status, budget and popularity are all predictors revenue, with an interaction between the variables as popularity and budget well. This was determined by the fact that in fitting linear models, we oberverd low p-values. We then fit several models, and found that our model including an interaction between budget and popularity outperformed that without. This was determined using metrics such as RMSE and adjusted r-squared. However, from this model we also detected potential multicollinearity between the two predictors indicated by high VIF values that exceeded the threshold of 10. This aspect of our analysis will require futher analysis, and is certianly a limitation to our model. This could potentially be improved by finding a metric to combine the two predictors, because we feel crucial information would be lost if we were to simply remove one.
 
-For our future anlysis, it would be ideal to derive a model with a higher r-squared, as our model still leaves much to be accounted for. We hope to test other predictors, or potentially created new metrics from the existing ones to try and understand the trend in revnue better. 
-
+For our future anlysis, it would be ideal to derive a model with a higher r-squared, as our model still leaves much to be accounted for. We hope to test other predictors, or potentially created new metrics from the existing ones to try and understand the trend in revnue better.
 
 In this section you’ll include a summary of what you have learned about your research question along with statistical arguments supporting your conclusions. In addition, discuss the limitations of your analysis and provide suggestions on ways the analysis could be improved. Any potential issues pertaining to the reliability and validity of your data and appropriateness of the statistical analysis should also be discussed here. Lastly, this section will include ideas for future work.
 
