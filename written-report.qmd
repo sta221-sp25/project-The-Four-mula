@@ -230,7 +230,69 @@ imdb_data_cleaned |>
 
 ### Methodology
 
-This section includes a brief description of your modeling process. Explain the reasoning for the type of model you’re fitting, predictor variables considered for the model including any interactions. Additionally, show how you arrived at the final model by describing the model selection process, interactions considered, variable transformations (if needed), assessment of conditions and diagnostics, and any other relevant considerations that were part of the model fitting process.
+**Variables and Interaction Selection**
+
+Given the EDA analysis we did, we discovered that:
+
+1\. revenue and budget are both strongly skrewed, and therefore, log transformed movie revenue and log transformed movie budget would be used
+
+2\. there is no potential multicolinearity effect between budget, runtime, popularity, and vote_average
+
+3\. Potential interaction Term: Action Movies and Runtime, Vote Average and Vote Count, Budget and Popularity
+
+**Testing Single Variables**
+
+```{r}
+m1 <- lm(log_revenue ~ vote_average, data = imdb_data_cleaned)
+m2 <- lm(log_revenue ~ status, data = imdb_data_cleaned)
+m3 <- lm(log_revenue ~ runtime, data = imdb_data_cleaned)
+m4 <- lm(log_revenue ~ adult, data = imdb_data_cleaned)
+m5 <- lm(log_revenue ~ log_budget, data = imdb_data_cleaned)
+m6 <- lm(log_revenue ~ popularity, data = imdb_data_cleaned)
+m7 <- lm(log_revenue ~ action_movie, data = imdb_data_cleaned)
+
+tidy(m1) |>
+  kable(digits = 3)
+tidy(m2) |>
+  kable(digits = 3)
+tidy(m3) |>
+  kable(digits = 3)
+tidy(m4) |>
+  kable(digits = 3)
+tidy(m5) |>
+  kable(digits = 3)
+tidy(m6) |>
+  kable(digits = 3)
+tidy(m7) |>
+  kable(digits = 3)
+```
+
+can write about all significant on all those variable above
+
+**Testing Addition Term and Interaction Term**
+
+```{r}
+m8 <- lm(log_revenue ~ vote_average + status + runtime + adult + log_budget + popularity + action_movie, data = imdb_data_cleaned)
+tidy(m8) |>
+  kable(digits = 3)
+rsq_m8 <- summary(m8)$adj.r.squared
+rsq_m8
+
+m9 <- lm(log_revenue ~ vote_average + status + runtime + adult + log_budget + popularity + action_movie + action_movie * runtime + log_budget * popularity, data = imdb_data_cleaned)
+tidy(m9) |>
+  kable(digits = 3)
+rsq_m9 <- summary(m9)$adj.r.squared
+rsq_m9
+
+m10 <- lm(log_revenue ~ vote_average + status + runtime + adult + log_budget + popularity + action_movie + action_movie * runtime + log_budget * popularity + vote_average * popularity, data = imdb_data_cleaned)
+tidy(m10) |>
+  kable(digits = 3)
+rsq_m10 <- summary(m10)$adj.r.squared
+rsq_m10
+
+```
+
+m9 the best
 
 ### Results
 
