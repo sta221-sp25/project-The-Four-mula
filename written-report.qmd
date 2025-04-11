@@ -213,7 +213,8 @@ Action movies have longer runtimes typically compared to other genres due to sto
 ```{r}
 imdb_data_cleaned <- imdb_data_cleaned |>
   mutate(action_movie = case_when(str_detect(genres, "Action") ~ 1,
-                              TRUE ~ 0))
+                              TRUE ~ 0)) %>% 
+  mutate(action_movie = factor(action_movie))
 
 action_runtime_fit <- lm(revenue ~ action_movie * runtime, data = imdb_data_cleaned)
 tidy(action_runtime_fit) |>
@@ -228,28 +229,20 @@ imdb_data_cleaned |>
   ggpairs()
 ```
 
-### Methodology
+### Methodology/Final Model 
 
-**Variables and Interaction Selection**
-
-Given the EDA analysis we did, we discovered that:
-
-1\. revenue and budget are both strongly skrewed, and therefore, log transformed movie revenue and log transformed movie budget would be used
-
-2\. there is no potential multicolinearity effect between budget, runtime, popularity, and vote_average
-
-3\. Potential interaction Term: Action Movies and Runtime, Vote Average and Vote Count, Budget and Popularity
+With the EDA analysis done above, we decided to first fit Models 1-7 with individual predictors, including the average rating, movie production status, runtime length, adult movie status, log-transformed budget, popularity rating, and action movie status. 
 
 **Testing Single Variables**
 
 ```{r}
+
 m1 <- lm(log_revenue ~ vote_average, data = imdb_data_cleaned)
-m2 <- lm(log_revenue ~ status, data = imdb_data_cleaned)
-m3 <- lm(log_revenue ~ runtime, data = imdb_data_cleaned)
-m4 <- lm(log_revenue ~ adult, data = imdb_data_cleaned)
-m5 <- lm(log_revenue ~ log_budget, data = imdb_data_cleaned)
-m6 <- lm(log_revenue ~ popularity, data = imdb_data_cleaned)
-m7 <- lm(log_revenue ~ action_movie, data = imdb_data_cleaned)
+m2 <- lm(log_revenue ~ runtime, data = imdb_data_cleaned)
+m3 <- lm(log_revenue ~ adult, data = imdb_data_cleaned)
+m4 <- lm(log_revenue ~ log_budget, data = imdb_data_cleaned)
+m5 <- lm(log_revenue ~ popularity, data = imdb_data_cleaned)
+m6 <- lm(log_revenue ~ action_movie, data = imdb_data_cleaned)
 
 tidy(m1) |>
   kable(digits = 3)
@@ -263,36 +256,85 @@ tidy(m5) |>
   kable(digits = 3)
 tidy(m6) |>
   kable(digits = 3)
-tidy(m7) |>
-  kable(digits = 3)
+
 ```
 
-can write about all significant on all those variable above
+Given that the p-value for each of these individual predictors is less than 0, we can resonably conclude that there is a significant linear relationship between each of these individual predictors and the log-transformed revenue. 
 
-**Testing Addition Term and Interaction Term**
+**Final Model**
+
+With the analysis done above, we decided to first fit a Model 1 with the significant individual predictors (average rating, movie production status, runtime length, adult movie status, log-transformed budget, popularity rating, and action movie status). Then, we want to compare to Model 2 where we modify the model to account for potential interaction effects. Furthermore, we remove the predictor for action movies in Model 2, as the predictor doesn't seem to be statistically significant in the context of the linear regression model in Model 1, as the p-value exceeds the threshold of 0.05.
 
 ```{r}
-m8 <- lm(log_revenue ~ vote_average + status + runtime + adult + log_budget + popularity + action_movie, data = imdb_data_cleaned)
+m8 <- lm(log_revenue ~ vote_average + runtime + adult + log_budget + popularity + action_movie, data = imdb_data_cleaned)
 tidy(m8) |>
   kable(digits = 3)
+
 rsq_m8 <- summary(m8)$adj.r.squared
 rsq_m8
 
-m9 <- lm(log_revenue ~ vote_average + status + runtime + adult + log_budget + popularity + action_movie + action_movie * runtime + log_budget * popularity, data = imdb_data_cleaned)
+rmse <- sqrt(mean(resid(m8)^2))
+rmse
+
+AIC <- glance(m8)$AIC
+BIC <- glance(m8)$BIC
+
+AIC
+BIC
+```
+
+```{r}
+m9 <- lm(log_revenue ~ vote_average + runtime + adult + log_budget + popularity + log_budget * popularity, data = imdb_data_cleaned)
 tidy(m9) |>
   kable(digits = 3)
+
 rsq_m9 <- summary(m9)$adj.r.squared
 rsq_m9
 
-m10 <- lm(log_revenue ~ vote_average + status + runtime + adult + log_budget + popularity + action_movie + action_movie * runtime + log_budget * popularity + vote_average * popularity, data = imdb_data_cleaned)
-tidy(m10) |>
-  kable(digits = 3)
-rsq_m10 <- summary(m10)$adj.r.squared
-rsq_m10
+rmse <- sqrt(mean(resid(m9)^2))
+rmse
 
+AIC <- glance(m9)$AIC
+BIC <- glance(m9)$BIC
+
+AIC
+BIC
+
+vif(m9)
 ```
 
-m9 the best
+```{r}
+imdb_data_cleaned %>% 
+  mutate(popularity_mc = popularity - mean(popularity),
+         log_budget_mc = log_budget_mc - mean(log_budget_mc))
+
+m9 <- lm(log_revenue ~ vote_average + runtime + adult + log_budget_mc + popularity_mc + log_budget_mc * popularity_mc, data = imdb_data_cleaned)
+tidy(m9) |>
+  kable(digits = 3)
+
+rsq_m9 <- summary(m9)$adj.r.squared
+rsq_m9
+
+rmse <- sqrt(mean(resid(m9)^2))
+rmse
+
+AIC <- glance(m9)$AIC
+BIC <- glance(m9)$BIC
+
+AIC
+BIC
+
+vif(m9)
+```
+
+Model 2 outperforms Model 1 on both key metrics. Model 2 has a slightly lower RMSE, indicating better predictive accuracy, and a higher adjusted R-squared value, indicating a better fit and more variance explained by the model. Furthermore, since Model 2 has slightly lower AIC and BIC values, we select Model 2 as the better model. Looking at the VIF values for the predictors in Model 2, popularity and the interaction term between the log-transformed budget and popularity have extremely high VIF values, thus indicating a multicollinearity issue. However, the interaction term is statistically significant in the linear regression model and improves model performance. 
+
+Thus, our final model is reflected by 
+
+```{r}
+tidy(m9) %>% 
+  kable(digits = 3)
+```
 
 ### Results
 
