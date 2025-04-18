@@ -43,6 +43,8 @@ imdb_data_cleaned <- imdb_data_cleaned %>%
 
 ```
 
+
+
 ## Introduction:
 
 This project aims to examine key factors influencing IMDb movie revenues to understand what drives a movie's box office success. Revenue, a widely used measure of success in the film industry, reflects audience demand and commercial viability. Revenue is defined as the total amount of money a given movie generates from all sources related to the film. Prior research has highlighted various influences, such as star power, genre, and marketing, but the relative importance of these factors remains debated.
@@ -93,6 +95,8 @@ We chose to examine movie revenue as our response variable.
 
 ##### Univariate EDA
 
+
+
 ```{r}
 summary(imdb_data_cleaned$log_revenue)
 ```
@@ -107,7 +111,11 @@ imdb_data_cleaned %>%
   theme(plot.title = element_text(size = 10))
 ```
 
+
+
 The histogram shows the distribution of the log transformed IMDb movie revenues response variable, which is left-skewed and unimodal, indicating that on average, movies listed on IMDb tend to generate higher revenues. Furthermore, the distribution of the log transformed IMDb movie revenues has a center of approximately 1,800,000 US dollars, described by the median, and a spread of approximately 18,600,000 US dollars, described by the interquartile range. The majority of IMDb movies generate between approximately 24,100 and 18,600,000 US dollars.
+
+
 
 ```{r}
 summary(imdb_data_cleaned$log_budget) 
@@ -123,7 +131,11 @@ imdb_data_cleaned %>%
   theme(plot.title = element_text(size = 10)) 
 ```
 
+
+
 The histogram shows the distribution of the log transformed IMDb movie budget predictor variable, which is left-skewed and unimodal, indicting that although IMDb movie budget varies greatly, on average, movies listed on IMDb tend to have higher budgets. Furthermore, the distribution of the log transformed IMDb movie budget has a center of approximately 5,000,000 US dollars, described by the median, and a spread of approximately 25,000,000 US dollars, described by the interquartile range.
+
+
 
 ```{r}
 imdb_data_cleaned %>% 
@@ -136,9 +148,13 @@ imdb_data_cleaned %>%
         axis.text.y = element_blank()) 
 ```
 
+
+
 The majority of IMDb movies' average ratings are concentrated between a rating of 4.0 to 8.0. A few IMDb movies have a low rating (average rating below 2.5), contributing to the left-skewness of the distribution of IMDb movies' average rating predictor variable. Furthermore, a few IMDb movies have an extremely high rating (average rating of 10.0).
 
 ##### Bivariate EDA
+
+
 
 ```{r}
 imdb_data_cleaned |>
@@ -159,7 +175,11 @@ summary(revenue_budget_model)$r.squared
 
 ```
 
+
+
 From our visualization plotting the log transformed movie revenue versus the log transformed movie budget, as well as our relatively high $R^2$ value associated with the linear regression model, we can identify that there is a strong linear correlation between the log transformed movie revenue and log transformed movie budget. The p-value is effectively 0, further exemplifying that there is a linear relationship between the log transformed movie revenue and the log transformed movie budget. This is expected, as high budget movies are often more anticipated and therefore, more people tend to purchase tickets. Because our data set is so large, this relationship is also displayed using a smoother scatter visualization, which illustrates point density seen in our scatter plot.
+
+
 
 ```{r}
 imdb_data_cleaned <- imdb_data_cleaned %>%
@@ -181,6 +201,8 @@ imdb_data_cleaned |>
 
 ```
 
+
+
 From our boxplot, we can see that the median revenue for Medium rated movies (approximately 8,880,000 dollars) is actually slightly higher than those with High ratings (approximately 5,400,000 dollars). The median revenue for Low rated movies is significantly lower (approximately 400 dollars). The IQR of movie revenues with High ratings is also much larger than for Medium and Low rated movies.
 
 **Potential Interaction Effects**
@@ -191,15 +213,21 @@ To check interaction effects between some of our predictors to ensure we don't h
 
 Budget and popularity are likely to have interaction effects because higher-budget movies often receive more marketing, leading to increased visibility and higher popularity. However, the p-value for the interaction term (budget:popularity) is 0.48, indicating that the effect is not statistically significant at the 0.05 level, meaning budget’s impact on revenue does not significantly change based on popularity.
 
+
+
 ```{r}
 budget_pop_fit <- lm(revenue ~ budget * popularity, data = imdb_data_cleaned)
 tidy(budget_pop_fit) |>
   kable(digits = 3)
 ```
 
+
+
 ##### Vote Average and Vote Count
 
 Since movies with higher vote counts often also have higher vote averages, there could be a multiplicative effect on revenue. If an interaction is present, it means that vote count alone does not fully explain revenue — its impact depends on the vote average. And, the p-value for the interaction term (vote_average:vote_count) is 2.331652e-45, indicating that the effect is extremely significant at the 0.05 level, meaning there is very strong evidence that the relationship between vote count and revenue depends on the vote average. So, there is a very strong interaction effect between these two variables.
+
+
 
 ```{r}
 vote_avg_count_fit <- lm(revenue ~ vote_average * vote_count, data = imdb_data_cleaned)
@@ -207,9 +235,13 @@ tidy(vote_avg_count_fit) |>
   kable(digits = 3)
 ```
 
+
+
 ##### Action Movies and Runtime
 
 Action movies have longer runtimes typically compared to other genres due to storytelling, long fight sequences, and action scenes. We thought that there may be an interaction effect between being an action movie and runtime when predicting revenue. Longer runtimes could allow for larger audiences and increasing box office earnings. However, excessively long movies may also reduce viewers due to time constraints. However, from the p-value of the interaction term, which is 2.991935e-15, we can see that this term is quite significant at the 0.05 level. This implies that there is some interaction between a movie having the 'action' genre and longer runtimes, or the effect of runtime on revenue is different for action movies compared to non-action movies. This could suggest that longer runtimes contribute positively to revenue for action films, possibly because audiences expect more elaborate fight sequences and storytelling in the genre, making them more willing to engage with longer films.
+
+
 
 ```{r}
 imdb_data_cleaned <- imdb_data_cleaned |>
@@ -222,7 +254,11 @@ tidy(action_runtime_fit) |>
   kable(digits = 3)
 ```
 
+
+
 We also explored the correlation between all possible combinations of the variables budget, runtime, popularity and vote_average, to see how they interact with each other. The results indicate that the correlations between these variables are relatively low, with none exceeding 0.310. This suggests that there is no strong linear relationship between them, reducing the likelihood of multicollinearity issues when including these variables in a predictive model. As a result, we can confidently incorporate them into our analysis.
+
+
 
 ```{r}
 imdb_data_cleaned |>
@@ -230,11 +266,15 @@ imdb_data_cleaned |>
   ggpairs()
 ```
 
+
+
 ### Methodology/Final Model
 
 With the EDA analysis done above, we decided to first fit Models 1-7 with individual predictors, including the average rating, movie production status, runtime length, adult movie status, log-transformed budget, popularity rating, and action movie status.
 
 **Testing Single Variables**
+
+
 
 ```{r}
 #| error: false 
@@ -264,11 +304,15 @@ tidy(m6) |>
 
 ```
 
+
+
 After testing a linear regression model with each of the individual predictors to predict the log-transformed budget, since the p-value for each of these individual predictors is less than 0, we can reasonably conclude that there is a significant linear relationship between each of these individual predictors and the log-transformed revenue.
 
 **Final Model**
 
 With the analysis done above, we decided to first fit a Model 1 with the significant individual predictors (average rating, movie production status, runtime length, adult movie status, log-transformed budget, popularity rating, and action movie status). Then, we want to compare to Model 2 where we modify the model to account for potential interaction effects that we explored in EDA. Furthermore, we remove the predictor for action movies in Model 2, as the predictor doesn't seem to be statistically significant in the context of the linear regression model in Model 1, as the p-value exceeds the threshold of 0.05.
+
+
 
 ```{r}
 m8 <- lm(log_revenue ~ vote_average + runtime + adult + 
@@ -311,7 +355,11 @@ BIC
 vif(m9)
 ```
 
+
+
 Model 2 outperforms Model 1 on both key metrics. Model 2 has a slightly lower RMSE, indicating better predictive accuracy, and a higher adjusted R-squared value, indicating a better fit and more variance explained by the model. Furthermore, since Model 2 has slightly lower AIC and BIC values, we select Model 2 as the better model. However, looking at the VIF values for the predictors in Model 2, popularity and the interaction term between the log-transformed budget and popularity have extremely high VIF values, thus indicating a multicollinearity issue such that these predictors provide redundant information or they are highly linear dependent/related. Thus, to address this issue, we mean center popularity and log-transformed budget to transform thse predictors and reduce the VIF to create Model 3.
+
+
 
 ```{r}
 imdb_data_cleaned <- imdb_data_cleaned %>% 
@@ -339,6 +387,8 @@ BIC
 vif(m10)
 ```
 
+
+
 Model 3 performs the same as Model 2 across all key metrics, including RMSE, R-squared, and AIC/BIC. However, looking at the VIF values for the predictors in Model 3, popularity and the interaction term between the log-transformed budget and popularity have significantly lower VIF values. Although the VIF values still exceed the threshold of 10, indiciating potential multicollinearity concern, it's crucial to understand the context behind the interaction term, as it is both theoretically justified and statistically significant, improving the model's predictive power overall.
 
 Thus, our final model is reflected by Model 3, which is:
@@ -351,10 +401,14 @@ $$
 \end{aligned}
 $$
 
+
+
 ```{r}
 tidy(m10) %>% 
   kable(digits = 3)
 ```
+
+
 
 ### Results
 
@@ -393,3 +447,4 @@ In this section you’ll include a summary of what you have learned about your r
 ::: callout-important
 Before you submit, make sure your code chunks are turned off with `echo: false` and there are no warnings or messages with `warning: false` and `message: false` in the YAML.
 :::
+
