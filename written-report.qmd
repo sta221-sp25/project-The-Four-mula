@@ -340,7 +340,11 @@ Model 3 performs the same as Model 2 across all key metrics, including RMSE, R-s
 Thus, our final model is reflected by Model 3, which is:
 
 $$
-\begin{align*}\widehat{\log(\text{revenue})} &= \widehat{\beta}_0 + \widehat{\beta}_1 \cdot \text{vote average} + \widehat{\beta}_2 \cdot \text{runtime} + \widehat{\beta}_3 \cdot \text{adult} \\&\quad + \widehat{\beta}_4 \cdot \log\_budget\_mc + \widehat{\beta}_5 \cdot \text{popularity mc} \\&\quad + \widehat{\beta}_6 \cdot (\log\_budget\_mc \times \text{popularity mc})\end{align*}
+\begin{aligned}
+\widehat{\log(\text{revenue})} &= \widehat{\beta}_0 + \widehat{\beta}_1 \cdot \text{vote average} + \widehat{\beta}_2 \cdot \text{runtime} + \widehat{\beta}_3 \cdot \text{adult} \\
+&\quad + \widehat{\beta}_4 \cdot \log\_budget\_mc + \widehat{\beta}_5 \cdot \text{popularity mc} \\
+&\quad + \widehat{\beta}_6 \cdot (\log\_budget\_mc \times \text{popularity mc})
+\end{aligned}
 $$
 
 ```{r}
