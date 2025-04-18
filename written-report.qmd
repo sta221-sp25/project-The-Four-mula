@@ -237,9 +237,7 @@ With the EDA analysis done above, we decided to first fit Models 1-7 with indivi
 **Testing Single Variables**
 
 ```{r}
-#| error: false 
-#| warning: false 
-#| message: false
+#| echo: false
 #| results: 'hide'
 
 m1 <- lm(log_revenue ~ vote_average, data = imdb_data_cleaned)
