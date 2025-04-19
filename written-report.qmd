@@ -12,6 +12,7 @@ editor: visual
 
 ```{r}
 #| label: load-packages-and-data
+#| echo: false
 
 library(tidyverse)
 library(knitr)
@@ -42,6 +43,34 @@ imdb_data_cleaned <- imdb_data_cleaned %>%
   mutate(log_budget = log(budget)) 
 
 ```
+
+## Notes for Improvement
+
+Model/analysis:
+
+-   As for some constructive feedback, something to explore could also be whether a movie is adult or not and its popularity or vote count, as a movie being adult should restrict the populations that can view it. We would likely expect the vote count or popularity to decrease as a result, so although your VIF later demonstrates that they don’t appear very correlated, it might be helpful to show that that’s the case to readers.
+
+<!-- -->
+
+-   since VIF is so high for budget & popularity & r sq is small, should we even include interaction term?
+
+-   One area to improve this team's analysis would be the inclusion of a drop-in deviance test when testing different predictors, such as whether or not to include an interaction effect in the model
+
+EDA:
+
+-   One area to improve the EDA may be to include interaction effect visualizations, in addition to tables that examine p-values. From a reader's perspective, it may be easier to understand the impact of the interaction effects in visualization form.
+
+-   show interaction w VIF
+
+-   interaction bw runtime & action movies in model? remove action?
+
+-   Additionally, I am most interested in the statistically significant interaction effect. While this group has some interpretation of why this interaction effect exists, we suggest that this group highlights more of the "why" in the final project and includes visualizations while initially testing for it.
+
+General:
+
+-   write conclusion!
+
+-   In the final model section, there are some numerical outputs after the kable, and it would be helpful to give some context of what those numbers are.
 
 ## Introduction:
 
@@ -185,9 +214,75 @@ From our boxplot, we can see that the median revenue for Medium rated movies (ap
 
 **Potential Interaction Effects**
 
+We also explored the correlation between all possible combinations of the variables budget, runtime, popularity and vote_average, to see how they interact with each other. The results indicate that the correlations between these variables are relatively low, with none exceeding 0.310. This suggests that there is no strong linear relationship between them, reducing the likelihood of multicollinearity issues when including these variables in a predictive model. As a result, we can confidently incorporate them into our analysis.
+
+```{r}
+imdb_data_cleaned |>
+  select(budget, runtime, popularity, vote_average) |>
+  ggpairs()
+```
+
+We also plotted a correlation matrix among all our quantitative variables. From this, we can see that there seems to be some positive correlation worth exploring between `budget` and `vote_count` (number of votes movie receives), but all other variables seem to be generally uncorrelated and shouldn't be a cause of concern while building our model.
+
+```{r}
+correlations <- imdb_data_cleaned |>
+  select(vote_average, vote_count, runtime, log_budget, popularity) |>
+  cor()
+
+corrplot(correlations, method = "number")
+```
+
 To check interaction effects between some of our predictors to ensure we don't have issues with multicollinearity in our models, we checked interaction effects between some variables that are likely to have some collinearity. For 3 pairs of predictor variables, we fit an interaction model with revenue as the response variable to see if there is a statistically significant impact of the interaction term on the model.
 
+##### Adult and Popularity
+
+##### Budget and Runtime
+
 ##### Budget and Popularity
+
+```{r}
+max(imdb_data_cleaned$popularity)
+
+ggplot(imdb_data_cleaned, aes(x = popularity)) +
+  geom_histogram(fill= "violet", bins = 10) +
+  labs(
+    title = "Distribution of Popularity of Movies",
+    x = "Popularity",
+    y = "Count"
+    )
+```
+
+From our exploration of the popularity data, we can see that its values range from 0-2994, with an extremely heavy right skew. So, we decided to bin it into 4 categories, "Low, "Medium", "High" and "Very High" with the following thresholds:
+
+|              |                      |
+|--------------|----------------------|
+| **Category** | **Popularity Range** |
+| Low          | 0–30                 |
+| Medium       | 30–90                |
+| High         | 90–150               |
+| Very High    | 150+                 |
+
+```{r}
+imdb_data_cleaned <- imdb_data_cleaned |>
+  mutate(pop_category = case_when(
+    popularity < 30 ~ "Low",
+    popularity >=30 & popularity <90 ~ "Medium",
+    popularity >= 90 & popularity < 150 ~ "High",
+    popularity >= 150 ~ "Very High"
+  ))
+```
+
+```{r}
+ggplot(imdb_data_cleaned, aes(x = log_budget, y = log_revenue, color = pop_category)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    title = "Relationship between Budget and Log Revenue",
+    subtitle = "Interaction effect of popularity on their relationship",
+    x = "Log Budget",
+    y = "Log Revenue",
+    color = "Popularity"
+  )
+```
 
 Budget and popularity are likely to have interaction effects because higher-budget movies often receive more marketing, leading to increased visibility and higher popularity. However, the p-value for the interaction term (budget:popularity) is 0.48, indicating that the effect is not statistically significant at the 0.05 level, meaning budget’s impact on revenue does not significantly change based on popularity.
 
@@ -198,6 +293,20 @@ tidy(budget_pop_fit) |>
 ```
 
 ##### Vote Average and Vote Count
+
+\['low' votes have small sample size, likely–\> can get rid of it\]
+
+```{r}
+ggplot(imdb_data_cleaned, aes(x = vote_count, y = log_revenue, color = vote_category)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    title = "Relationship between Vote Count and Revenue",
+    subtitle = "Interaction effect of ratings on their relationship",
+    x = "Vote Count",
+    y = "Log Revenue",
+    color = "Vote Category"
+  )
+```
 
 Since movies with higher vote counts often also have higher vote averages, there could be a multiplicative effect on revenue. If an interaction is present, it means that vote count alone does not fully explain revenue — its impact depends on the vote average. And, the p-value for the interaction term (vote_average:vote_count) is 2.331652e-45, indicating that the effect is extremely significant at the 0.05 level, meaning there is very strong evidence that the relationship between vote count and revenue depends on the vote average. So, there is a very strong interaction effect between these two variables.
 
@@ -220,14 +329,6 @@ imdb_data_cleaned <- imdb_data_cleaned |>
 action_runtime_fit <- lm(revenue ~ action_movie * runtime, data = imdb_data_cleaned)
 tidy(action_runtime_fit) |>
   kable(digits = 3)
-```
-
-We also explored the correlation between all possible combinations of the variables budget, runtime, popularity and vote_average, to see how they interact with each other. The results indicate that the correlations between these variables are relatively low, with none exceeding 0.310. This suggests that there is no strong linear relationship between them, reducing the likelihood of multicollinearity issues when including these variables in a predictive model. As a result, we can confidently incorporate them into our analysis.
-
-```{r}
-imdb_data_cleaned |>
-  select(budget, runtime, popularity, vote_average) |>
-  ggpairs()
 ```
 
 ### Methodology/Final Model
@@ -389,5 +490,5 @@ In this section you’ll include a summary of what you have learned about your r
 ### Conclusion
 
 ::: callout-important
-Before you submit, make sure your code chunks are turned off with `echo: false` and there are no warnings or messages with `warning: false` and `message: false` in the YAML.
+Before you submit, make sure your code chunks are turned off with `echo: false` and there are no warnings or messages with `warning: false` and `message: false` in theAML.
 :::
