@@ -237,8 +237,6 @@ To check interaction effects between some of our predictors to ensure we don't h
 ##### Budget and Popularity
 
 ```{r}
-max(imdb_data_cleaned$popularity)
-
 ggplot(imdb_data_cleaned, aes(x = popularity)) +
   geom_histogram(fill= "violet", bins = 10) +
   labs(
@@ -314,24 +312,9 @@ tidy(vote_avg_count_fit) |>
   kable(digits = 3)
 ```
 
-##### Action Movies and Runtime
-
-Action movies have longer runtimes typically compared to other genres due to storytelling, long fight sequences, and action scenes. We thought that there may be an interaction effect between being an action movie and runtime when predicting revenue. Longer runtimes could allow for larger audiences and increasing box office earnings. However, excessively long movies may also reduce viewers due to time constraints. However, from the p-value of the interaction term, which is 2.991935e-15, we can see that this term is quite significant at the 0.05 level. This implies that there is some interaction between a movie having the 'action' genre and longer runtimes, or the effect of runtime on revenue is different for action movies compared to non-action movies. This could suggest that longer runtimes contribute positively to revenue for action films, possibly because audiences expect more elaborate fight sequences and storytelling in the genre, making them more willing to engage with longer films.
-
-```{r}
-imdb_data_cleaned <- imdb_data_cleaned |>
-  mutate(action_movie = case_when(str_detect(genres, "Action") ~ 1,
-                              TRUE ~ 0)) %>% 
-  mutate(action_movie = factor(action_movie))
-
-action_runtime_fit <- lm(revenue ~ action_movie * runtime, data = imdb_data_cleaned)
-tidy(action_runtime_fit) |>
-  kable(digits = 3)
-```
-
 ### Methodology
 
-With the EDA analysis done above, we decided to first fit Models 1-7 with individual predictors, including the average rating, runtime length, adult movie status, log-transformed budget, popularity rating, and vote count. After testing a linear regression model with each of the individual predictors to predict the log-transformed budget, since the p-value for each of these individual predictors is less than 0, we can reasonably conclude that there is a significant linear relationship between each of these individual predictors and the log-transformed revenue. Next, we test the significance of these relationships in tandem to predict movie revenue. 
+With the EDA analysis done above, we decided to first fit Models 1-6 with individual predictors, including the average rating, runtime length, adult movie status, log-transformed budget, popularity rating, and vote count. After testing a linear regression model with each of the individual predictors to predict the log-transformed budget, since the p-value for each of these individual predictors is less than 0, we can reasonably conclude that there is a significant linear relationship between each of these individual predictors and the log-transformed revenue. Next, we test the significance of these relationships in tandem to predict movie revenue. 
 
 ```{r}
 #| echo: false
@@ -342,8 +325,7 @@ m2 <- lm(log_revenue ~ runtime, data = imdb_data_cleaned)
 m3 <- lm(log_revenue ~ adult, data = imdb_data_cleaned)
 m4 <- lm(log_revenue ~ log_budget, data = imdb_data_cleaned)
 m5 <- lm(log_revenue ~ popularity, data = imdb_data_cleaned)
-m6 <- lm(log_revenue ~ action_movie, data = imdb_data_cleaned)
-m7 <- lm(log_revenue ~ vote_count, data = imdb_data_cleaned) 
+m6 <- lm(log_revenue ~ vote_count, data = imdb_data_cleaned) 
 
 tidy(m1) |>
   kable(digits = 3)
@@ -357,14 +339,12 @@ tidy(m5) |>
   kable(digits = 3)
 tidy(m6) |>
   kable(digits = 3)
-tidy(m7) %>% 
-  kable(digits = 3)
 
 ```
 
 **Final Model**
 
-With the analysis done above, we decided to first fit a Model 1 with the significant individual predictors (average rating, runtime length, adult movie status, log-transformed budget, popularity rating, and vote count). Then, we want to compare to Model 2 where we modify the model to account for potential interaction effects that we explored in EDA. Furthermore, we remove the predictor for action movies in Model 2, as the predictor doesn't seem to be statistically significant in the context of the linear regression model in Model 1, as the p-value exceeds the threshold of 0.05.
+With the analysis done above, we decided to first fit a Model 1 with the significant individual predictors (average rating, runtime length, adult movie status, log-transformed budget, popularity rating, and vote count). Then, we want to compare to Model 2 where we modify the model to account for potential interaction effects that we explored in EDA. 
 
 ```{r}
 m8 <- lm(log_revenue ~ vote_average + runtime + adult + 
