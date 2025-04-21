@@ -236,17 +236,7 @@ To check interaction effects between some of our predictors to ensure we don't h
 
 ##### Budget and Popularity
 
-```{r}
-ggplot(imdb_data_cleaned, aes(x = popularity)) +
-  geom_histogram(fill= "violet", bins = 10) +
-  labs(
-    title = "Distribution of Popularity of Movies",
-    x = "Popularity",
-    y = "Count"
-    )
-```
-
-From our exploration of the popularity data, we can see that its values range from 0-2994, with an extremely heavy right skew. So, we decided to bin it into 4 categories, "Low, "Medium", "High" and "Very High" with the following thresholds:
+After exploring popularity, it is observable that its values range from 0-2994 with an extremely heavy right skew. Thus, popularity is binned into four categories, "Low", "Medium", "High", and "Very High" with the following thresholds: 
 
 |              |                      |
 |--------------|----------------------|
