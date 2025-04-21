@@ -224,14 +224,6 @@ imdb_data_cleaned |>
 
 We also plotted a correlation matrix among all our quantitative variables. From this, we can see that there seems to be some positive correlation worth exploring between `budget` and `vote_count` (number of votes movie receives), but all other variables seem to be generally uncorrelated and shouldn't be a cause of concern while building our model.
 
-```{r}
-correlations <- imdb_data_cleaned |>
-  select(vote_average, vote_count, runtime, log_budget, popularity) |>
-  cor()
-
-corrplot(correlations, method = "number")
-```
-
 To check interaction effects between some of our predictors to ensure we don't have issues with multicollinearity in our models, we checked interaction effects between some variables that are likely to have some collinearity. For 3 pairs of predictor variables, we fit an interaction model with revenue as the response variable to see if there is a statistically significant impact of the interaction term on the model.
 
 ##### Budget and Popularity
