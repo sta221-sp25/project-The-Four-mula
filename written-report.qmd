@@ -129,7 +129,7 @@ summary(imdb_data_cleaned$log_revenue)
 ```{r}
 imdb_data_cleaned %>% 
   ggplot(mapping = aes(x = log_revenue)) + 
-  geom_histogram(fill = "lightblue") + 
+  geom_histogram(fill = "darkblue") + 
   labs(title = "Distribution of Log-Transformed IMDb Movie Revenue", 
        x = "Total Log Transformed Revenue (USD)", 
        y = "Frequency") + 
@@ -142,11 +142,11 @@ The histogram shows the distribution of the log transformed IMDb movie revenues 
 summary(imdb_data_cleaned$log_budget) 
 ```
 
-```{r}
+```{r fig.width=3.5, fig.height=2.5}
 imdb_data_cleaned %>% 
   ggplot(mapping = aes(x = log_budget)) + 
-  geom_histogram(fill = "lightblue") + 
-  labs(title = "Distribution of Log-Transformed IMDb Movie Budget", 
+  geom_histogram(fill = "darkblue") + 
+  labs(title = "Distribution of Log-Transformed Movie Budget", 
        x = "Total Log Transformed Budget (USD)", 
        y = "Frequency") + 
   theme(plot.title = element_text(size = 10)) 
@@ -154,10 +154,10 @@ imdb_data_cleaned %>%
 
 The histogram shows the distribution of the log transformed IMDb movie budget predictor variable, which is left-skewed and unimodal, indicting that although IMDb movie budget varies greatly, on average, movies listed on IMDb tend to have higher budgets. Furthermore, the distribution of the log transformed IMDb movie budget has a center of approximately 5,000,000 US dollars, described by the median, and a spread of approximately 25,000,000 US dollars, described by the interquartile range.
 
-```{r}
+```{r fig.width=3.5, fig.height=2.5}
 imdb_data_cleaned %>% 
   ggplot(mapping = aes(x = vote_average)) + 
-  geom_boxplot() + 
+  geom_histogram(fill = "darkblue") + 
   labs(title = "Distribution of IMDb Average Rating", 
        x = "Average Rating (0-10)") + 
   theme(plot.title = element_text(size = 10),
@@ -169,18 +169,12 @@ The majority of IMDb movies' average ratings are concentrated between a rating o
 
 ##### Bivariate EDA
 
-```{r}
+```{r fig.width=3.5, fig.height=2.5}
 imdb_data_cleaned |>
   ggplot(aes(x = log_budget, y = log_revenue)) + 
-  geom_point() + geom_smooth(method = lm) +
+  geom_point(alpha = .4) + geom_smooth(method = lm) +
   labs(title = "Log of Movie Revenue vs. Log of Budget", 
        x = "Log of Budget (USD)", y = "Log of Revenue (USD)")
-
-smoothScatter(imdb_data_cleaned$log_revenue, imdb_data_cleaned$log_budget,
-              xlab = "Log of Budget (USD)", 
-              ylab = "Log of Revenue (USD)", 
-              main = "Density Distribution of Log of Movie Revenue vs. Log of Budget", 
-              cex.main = 0.9)
 
 revenue_budget_model <- lm(log_revenue ~ log_budget, data = imdb_data_cleaned)
 tidy(revenue_budget_model) 
@@ -190,7 +184,7 @@ summary(revenue_budget_model)$r.squared
 
 From our visualization plotting the log transformed movie revenue versus the log transformed movie budget, as well as our relatively high $R^2$ value associated with the linear regression model, we can identify that there is a strong linear correlation between the log transformed movie revenue and log transformed movie budget. The p-value is effectively 0, further exemplifying that there is a linear relationship between the log transformed movie revenue and the log transformed movie budget. This is expected, as high budget movies are often more anticipated and therefore, more people tend to purchase tickets. Because our data set is so large, this relationship is also displayed using a smoother scatter visualization, which illustrates point density seen in our scatter plot.
 
-```{r}
+```{r fig.width=3.5, fig.height=2.5}
 imdb_data_cleaned <- imdb_data_cleaned %>%
   mutate(vote_category = case_when(
     vote_average >= 0 & vote_average <= 3 ~ "Low",
@@ -209,26 +203,21 @@ imdb_data_cleaned |>
   labs(x = "Vote Category", y = "Log of Revenue (USD)", title = "Revenue Across Different Levels of Ratings")
 
 ```
-
 From our boxplot, we can see that the median revenue for Medium rated movies (approximately 8,880,000 dollars) is actually slightly higher than those with High ratings (approximately 5,400,000 dollars). The median revenue for Low rated movies is significantly lower (approximately 400 dollars). The IQR of movie revenues with High ratings is also much larger than for Medium and Low rated movies.
-
-**Potential Interaction Effects**
-
-We explored the correlation between all possible combinations of the variables budget, runtime, popularity and vote_average, to see how they interact with each other. The results indicate that the correlations between these variables are relatively low, with none exceeding 0.310. This suggests that there is no strong linear relationship between them, reducing the likelihood of multicollinearity issues when including these variables in a predictive model. As a result, we can confidently incorporate them into our analysis.
-
-```{r}
+```{r fig.width=3.5, fig.height=2.5}
 imdb_data_cleaned |>
   select(log_budget, runtime, popularity, vote_average) |>
   ggpairs()
+
 ```
 
-We also plotted a correlation matrix among all our quantitative variables. From this, we can see that there seems to be some positive correlation worth exploring between `budget` and `vote_count` (number of votes movie receives), but all other variables seem to be generally uncorrelated and shouldn't be a cause of concern while building our model.
+In order to assess potential multicollinearity among predictors, we also created a correlation plot to identify which predictors have high correlations. We can see the highest correlation existing between runtime and budget and vote average and budget. Because of these correlations, we will take special care to check the VIF values in our final model and assess how this multicollinearity should be addressed. 
+**Potential Interaction Effects**
 
-To check interaction effects between some of our predictors to ensure we don't have issues with multicollinearity in our models, we checked interaction effects between some variables that are likely to have some collinearity. For 3 pairs of predictor variables, we fit an interaction model with revenue as the response variable to see if there is a statistically significant impact of the interaction term on the model.
 
 ##### Budget and Popularity
 
-After exploring popularity, it is observable that its values range from 0-2994 with an extremely heavy right skew. Thus, popularity is binned into four categories, "Low", "Medium", "High", and "Very High" with the following thresholds: 
+After exploring popularity, it is observable that its values range from 0-2994 with an extremely heavy right skew. Thus, popularity is binned into four categories, "Low", "Medium", "High", and "Very High" with the following thresholds:
 
 |              |                      |
 |--------------|----------------------|
@@ -248,8 +237,9 @@ imdb_data_cleaned <- imdb_data_cleaned |>
   ))
 ```
 
-```{r}
-ggplot(imdb_data_cleaned, aes(x = log_budget, y = log_revenue, color = pop_category)) +
+```{r fig.width=3.5, fig.height=2.5}
+ggplot(imdb_data_cleaned, aes(x = log_budget, y = log_revenue, 
+                              color = pop_category)) +
   geom_smooth(method = "lm", se = FALSE) +
   labs(
     title = "Relationship between Budget and Log Revenue",
@@ -258,6 +248,8 @@ ggplot(imdb_data_cleaned, aes(x = log_budget, y = log_revenue, color = pop_categ
     y = "Log Revenue",
     color = "Popularity"
   )
+
+
 ```
 
 From this visualization, we can see that there is a slight interaction effect between budget and popularity, since although the relationship between budget and revenue is generally positive and linear, as we noted in our univariate visualizations, its strength is influenced by popularity of the film. We can see that the slope tends to be higher for more popular films, ie, popular movies yield a stronger positive return on budget compared to less popular ones.
@@ -272,7 +264,7 @@ tidy(budget_pop_fit) |>
 
 ##### Vote Average and Vote Count
 
-```{r}
+```{r fig.width=3.5, fig.height=2.5}
 ggplot(imdb_data_cleaned, aes(x = vote_count, y = log_revenue, color = vote_category)) +
   geom_smooth(method = "lm", se = FALSE) +
   labs(
@@ -296,7 +288,7 @@ tidy(vote_avg_count_fit) |>
 
 ### Methodology
 
-With the EDA analysis done above, we decided to first fit Models 1-6 with individual predictors, including the average rating, runtime length, adult movie status, log-transformed budget, popularity rating, and vote count. After testing a linear regression model with each of the individual predictors to predict the log-transformed budget, since the p-value for each of these individual predictors is less than 0, we can reasonably conclude that there is a significant linear relationship between each of these individual predictors and the log-transformed revenue. Next, we test the significance of these relationships in tandem to predict movie revenue. 
+With the EDA analysis done above, we decided to first fit Models 1-6 with individual predictors, including the average rating, runtime length, adult movie status, log-transformed budget, popularity rating, and vote count. After testing a linear regression model with each of the individual predictors to predict the log-transformed budget, since the p-value for each of these individual predictors is less than 0, we can reasonably conclude that there is a significant linear relationship between each of these individual predictors and the log-transformed revenue. Next, we test the significance of these relationships in tandem to predict movie revenue.
 
 ```{r}
 #| echo: false
@@ -326,11 +318,11 @@ tidy(m6) |>
 
 **Final Model**
 
-With the analysis done above, we decided to first fit a Model 1 with the significant individual predictors (average rating, runtime length, adult movie status, log-transformed budget, popularity rating, and vote count). Then, we want to compare to Model 2 where we modify the model to account for potential interaction effects that we explored in EDA. 
+With the analysis done above, we decided to first fit a Model 1 with the significant individual predictors (average rating, runtime length, adult movie status, log-transformed budget, popularity rating, and vote count). Then, we want to compare to Model 2 where we modify the model to account for potential interaction effects that we explored in EDA.
 
 ```{r}
 m8 <- lm(log_revenue ~ vote_average + runtime + adult + 
-           log_budget + popularity + action_movie + vote_count, data = imdb_data_cleaned)
+           log_budget + popularity + vote_count, data = imdb_data_cleaned)
 tidy(m8) |>
   kable(digits = 3)
 ```
@@ -416,9 +408,9 @@ BIC
 vif(m10)
 ```
 
-Model 3 performs the same as Model 2 across all key metrics, including RMSE, R-squared, and AIC/BIC. However, looking at the VIF values for the predictors in Model 3, popularity and the interaction term between the log-transformed budget and popularity, as well as vote count and the interaction term between the vote average vote count, have significantly lower VIF values. Although the VIF values still exceed the threshold of 10 for popularity_mc and log_budget_mc:popularity_mc, indicating potential multicollinearity concern, it's crucial to understand the context behind the interaction term, as it is both theoretically justified and statistically significant, improving the model's predictive power overall. Furthermore, although the regression coefficients for vote_count and vote_average_mc:vote_count appear to be zero, since their effect is statistically significant, as indicated by the p-value, these predictors are likely impactful in a larger magnitude when scaled, and thus isn't accurately represented by the following model output. 
+Model 3 performs the same as Model 2 across all key metrics, including RMSE, R-squared, and AIC/BIC. However, looking at the VIF values for the predictors in Model 3, popularity and the interaction term between the log-transformed budget and popularity, as well as vote count and the interaction term between the vote average vote count, have significantly lower VIF values. Although the VIF values still exceed the threshold of 10 for popularity_mc and log_budget_mc:popularity_mc, indicating potential multicollinearity concern, it's crucial to understand the context behind the interaction term, as it is both theoretically justified and statistically significant, improving the model's predictive power overall. Furthermore, although the regression coefficients for vote_count and vote_average_mc:vote_count appear to be zero, since their effect is statistically significant, as indicated by the p-value, these predictors are likely impactful in a larger magnitude when scaled, and thus isn't accurately represented by the following model output.
 
-Furthermore, we conduct a drop-in deviance test to determine whether the interaction effects we examined above are statistically significant. For both the interaction between popularity and log-transformed budget and vote average and vote count, since the p-value is less than 0 for both interactions, it is likely that these interaction effects are significant in predicting the log-transformed revenue. This decision to include the interaction effects in the final model is supported by the fact that in Model 3, the p-value for these interaction effects are below 0. 
+Furthermore, we conduct a drop-in deviance test to determine whether the interaction effects we examined above are statistically significant. For both the interaction between popularity and log-transformed budget and vote average and vote count, since the p-value is less than 0 for both interactions, it is likely that these interaction effects are significant in predicting the log-transformed revenue. This decision to include the interaction effects in the final model is supported by the fact that in Model 3, the p-value for these interaction effects are below 0.
 
 ```{r}
 #| echo: false
@@ -453,7 +445,7 @@ anova(null_model, alternative_model_2, test = "Chisq") %>%
   kable(digits = 3)
 ```
 
-Thus, the final model is reflected by Model 3. 
+Thus, the final model is reflected by Model 3.
 
 ```{r}
 imdb_data_cleaned <- imdb_data_cleaned %>% 
@@ -467,7 +459,6 @@ m10 <- lm(log_revenue ~ vote_average_mc + runtime + adult +
 tidy(m10) |>
   kable(digits = 3)
 ```
-
 
 ### Results
 
