@@ -44,34 +44,6 @@ imdb_data_cleaned <- imdb_data_cleaned %>%
 
 ```
 
-## Notes for Improvement
-
-Model/analysis:
-
--   As for some constructive feedback, something to explore could also be whether a movie is adult or not and its popularity or vote count, as a movie being adult should restrict the populations that can view it. We would likely expect the vote count or popularity to decrease as a result, so although your VIF later demonstrates that they don’t appear very correlated, it might be helpful to show that that’s the case to readers.
-
-<!-- -->
-
--   since VIF is so high for budget & popularity & r sq is small, should we even include interaction term?
-
--   One area to improve this team's analysis would be the inclusion of a drop-in deviance test when testing different predictors, such as whether or not to include an interaction effect in the model
-
-EDA:
-
--   One area to improve the EDA may be to include interaction effect visualizations, in addition to tables that examine p-values. From a reader's perspective, it may be easier to understand the impact of the interaction effects in visualization form.
-
--   show interaction w VIF
-
--   interaction bw runtime & action movies in model? remove action?
-
--   Additionally, I am most interested in the statistically significant interaction effect. While this group has some interpretation of why this interaction effect exists, we suggest that this group highlights more of the "why" in the final project and includes visualizations while initially testing for it.
-
-General:
-
--   write conclusion!
-
--   In the final model section, there are some numerical outputs after the kable, and it would be helpful to give some context of what those numbers are.
-
 ## Introduction:
 
 This project aims to examine key factors influencing IMDb movie revenues to understand what drives a movie's box office success. Revenue, a widely used measure of success in the film industry, reflects audience demand and commercial viability. Revenue is defined as the total amount of money a given movie generates from all sources related to the film. Prior research has highlighted various influences, such as star power, genre, and marketing, but the relative importance of these factors remains debated.
@@ -174,7 +146,8 @@ imdb_data_cleaned |>
   ggplot(aes(x = log_budget, y = log_revenue)) + 
   geom_point(alpha = .4) + geom_smooth(method = lm) +
   labs(title = "Log of Movie Revenue vs. Log of Budget", 
-       x = "Log of Budget (USD)", y = "Log of Revenue (USD)")
+       x = "Log of Budget (USD)", y = "Log of Revenue (USD)") +
+    theme(plot.title = element_text(size = 10)) 
 
 revenue_budget_model <- lm(log_revenue ~ log_budget, data = imdb_data_cleaned)
 tidy(revenue_budget_model) 
@@ -200,10 +173,13 @@ imdb_data_cleaned$vote_category <- factor(imdb_data_cleaned$vote_category,
 
 imdb_data_cleaned |>
   ggplot(aes(x = vote_category, y = log_revenue)) + geom_boxplot() +
-  labs(x = "Vote Category", y = "Log of Revenue (USD)", title = "Revenue Across Different Levels of Ratings")
+  labs(x = "Vote Category", y = "Log of Revenue (USD)", title = "Revenue Across Different Levels of Ratings") +
+    theme(plot.title = element_text(size = 10)) 
 
 ```
+
 From our boxplot, we can see that the median revenue for Medium rated movies (approximately 8,880,000 dollars) is actually slightly higher than those with High ratings (approximately 5,400,000 dollars). The median revenue for Low rated movies is significantly lower (approximately 400 dollars). The IQR of movie revenues with High ratings is also much larger than for Medium and Low rated movies.
+
 ```{r fig.width=3.5, fig.height=2.5}
 imdb_data_cleaned |>
   select(log_budget, runtime, popularity, vote_average) |>
@@ -211,9 +187,7 @@ imdb_data_cleaned |>
 
 ```
 
-In order to assess potential multicollinearity among predictors, we also created a correlation plot to identify which predictors have high correlations. We can see the highest correlation existing between runtime and budget and vote average and budget. Because of these correlations, we will take special care to check the VIF values in our final model and assess how this multicollinearity should be addressed. 
-**Potential Interaction Effects**
-
+In order to assess potential multicollinearity among predictors, we also created a correlation plot to identify which predictors have high correlations. We can see the highest correlation existing between runtime and budget and vote average and budget. Because of these correlations, we will take special care to check the VIF values in our final model and assess how this multicollinearity should be addressed. **Potential Interaction Effects**
 
 ##### Budget and Popularity
 
@@ -243,11 +217,11 @@ ggplot(imdb_data_cleaned, aes(x = log_budget, y = log_revenue,
   geom_smooth(method = "lm", se = FALSE) +
   labs(
     title = "Relationship between Budget and Log Revenue",
-    subtitle = "Interaction effect of popularity on their relationship",
     x = "Log Budget",
     y = "Log Revenue",
     color = "Popularity"
-  )
+  ) +
+    theme(plot.title = element_text(size = 10)) 
 
 
 ```
@@ -269,11 +243,11 @@ ggplot(imdb_data_cleaned, aes(x = vote_count, y = log_revenue, color = vote_cate
   geom_smooth(method = "lm", se = FALSE) +
   labs(
     title = "Relationship between Vote Count and Revenue",
-    subtitle = "Interaction effect of ratings on their relationship",
     x = "Vote Count",
     y = "Log Revenue",
     color = "Rating Category"
-  )
+  ) +
+    theme(plot.title = element_text(size = 10)) 
 ```
 
 From the visualization, it seems as though there is a strong interaction effect between vote count and vote average (ratings). We observed an interaction between vote count and rating category in predicting revenue. As shown in the plot, the relationship between vote count and revenue differs across rating groups. Movies with higher ratings generally exhibit a stronger positive relationship between vote count and revenue, compared to lower-rated movies. This suggests that ratings modify the impact of audience engagement (vote count) on financial success of a movie.
