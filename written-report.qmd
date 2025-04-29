@@ -57,9 +57,9 @@ This project aims to examine key factors influencing IMDb movie revenues to unde
 
 We obtained our data set from [Kaggle](https://www.kaggle.com/), an online data science platform with a collection of community-developed open data sets. This data was collected by **Anand Shaw** from the **IMDb website** using various IMDb sites, and converted into a .csv file. The data was updated on a daily basis until 2 months ago. To get more indepth into our data set, [the data set](https://www.kaggle.com/datasets/anandshaw2001/imdb-data) we used collected information available on the IMDb website for different movies, such that each observation describes characteristics of a specific movie. In general, the characters being measured follow basic information about the movie, various classifications of the movie's popularity and rating, and the monetary values associated with the movie.
 
-Due to the large size of the original data set, we intentionally drop some characteristics, including `id`, `original_title`, `tagline`, `production_companies`, `overview`, `keyword` from the data set due to their redundancy, irrelevance to the research question, and presence of a significant number of null values. Additional data cleaning was performed for the scope of this project. To obtain informative interpretations of the distribution of the revenue response variable in terms of recency, we analyze IMDb movies released from 2000-present. Missing values and unnecessary fields were removed, and variables names and units were standardized. Furthermore, we log transform revenue and budget, as the revenue generated and budget allocated across the IMDb movies are heavily skewed. 
+Due to the large size of the original data set, we intentionally drop some characteristics, including `id`, `original_title`, `tagline`, `production_companies`, `overview`, `keyword` from the data set due to their redundancy, irrelevance to the research question, and presence of a significant number of null values. Additional data cleaning was performed for the scope of this project. To obtain informative interpretations of the distribution of the revenue response variable in terms of recency, we analyze IMDb movies released from 2000-present. Missing values and unnecessary fields were removed, and variables names and units were standardized. Furthermore, we log transform revenue and budget, as the revenue generated and budget allocated across the IMDb movies are heavily skewed.
 
-Out of the variables in our dataset, we chose to examine movie revenue as our response variable. Our predictors include: average user rating, runtime, whether the movie is classified as adult content, budget, popularity rating, and total number of movie ratings. 
+Out of the variables in our dataset, we chose to examine movie revenue as our response variable. Our predictors include: average user rating, runtime, whether the movie is classified as adult content, budget, popularity rating, and total number of movie ratings.
 
 ##### Univariate EDA
 
@@ -74,13 +74,13 @@ pander(summary(imdb_data_cleaned$log_revenue))
 imdb_data_cleaned %>% 
   ggplot(mapping = aes(x = log_revenue)) + 
   geom_histogram(fill = "darkblue") + 
-  labs(title = "Distribution of Log-Transformed IMDb Movie Revenue", 
-       x = "Total Log Transformed Revenue (USD)", 
+  labs(title = "Distribution of Log Movie Revenue", 
+       x = "Total Log Revenue (USD)", 
        y = "Frequency") + 
   theme(plot.title = element_text(size = 10))
 ```
 
-The histogram shows the distribution of the log transformed IMDb movie revenues response variable, which is left-skewed and unimodal, indicating that on average, movies listed on IMDb tend to generate higher revenues. Furthermore, the distribution of the log transformed IMDb movie revenues has a center of approximately 1,800,000 US dollars and a spread of approximately 18,600,000 US dollars. 
+The histogram shows the distribution of the log transformed IMDb movie revenues response variable, which is left-skewed and unimodal, indicating that on average, movies listed on IMDb tend to generate higher revenues. Furthermore, the distribution of the log transformed IMDb movie revenues has a center of approximately 1,800,000 US dollars and a spread of approximately 18,600,000 US dollars.
 
 ```{r}
 #| echo: false
@@ -93,8 +93,8 @@ pander(summary(imdb_data_cleaned$log_budget))
 imdb_data_cleaned %>% 
   ggplot(mapping = aes(x = log_budget)) + 
   geom_histogram(fill = "darkblue") + 
-  labs(title = "Distribution of Log-Transformed Movie Budget", 
-       x = "Total Log Transformed Budget (USD)", 
+  labs(title = "Distribution of Log Budget", 
+       x = "Total Log Budget (USD)", 
        y = "Frequency") + 
   theme(plot.title = element_text(size = 10)) 
 ```
@@ -119,11 +119,14 @@ imdb_data_cleaned |>
 revenue_budget_model <- lm(log_revenue ~ log_budget, data = imdb_data_cleaned)
 tidy(revenue_budget_model) %>% 
   kable(digits = 3)
-
-summary(revenue_budget_model)$r.squared
 ```
 
-From our visualization plotting the log transformed movie revenue versus the log transformed movie budget, as well as our relatively high $R^2$ value (0.8366) associated with the linear regression model, we can identify that there is a strong linear correlation between the log transformed movie revenue and log transformed movie budget. The p-value is effectively 0, further exemplifying that there is a linear relationship between the log transformed movie revenue and the log transformed movie budget. This is expected, as high budget movies are often more anticipated and therefore, more people tend to purchase tickets. 
+```{r}
+#| echo: false
+cat("R sq value of revenue~budget model:", summary(revenue_budget_model)$r.squared, "\n")
+```
+
+From our visualization plotting the log transformed movie revenue versus the log transformed movie budget, as well as our relatively high $R^2$ value (0.8366) associated with the linear regression model, we can identify that there is a strong linear correlation between the log transformed movie revenue and log transformed movie budget. The p-value is effectively 0, further exemplifying that there is a linear relationship between the log transformed movie revenue and the log transformed movie budget. This is expected, as high budget movies are often more anticipated and therefore, more people tend to purchase tickets.
 
 ```{r fig.width=3.5, fig.height=2.5}
 imdb_data_cleaned <- imdb_data_cleaned %>%
@@ -155,20 +158,13 @@ imdb_data_cleaned |>
 
 ```
 
-In order to assess potential multicollinearity among predictors, we also created a correlation plot to identify which predictors have high correlations. We can see the highest correlation existing between runtime and budget and vote average and budget. Because of these correlations, we will take special care to check the VIF values in our final model and assess how this multicollinearity should be addressed. 
+In order to assess potential multicollinearity among predictors, we also created a correlation plot to identify which predictors have high correlations. We can see the highest correlation existing between runtime and budget and vote average and budget. Because of these correlations, we will take special care to check the VIF values in our final model and assess how this multicollinearity should be addressed.
 
 **Potential Interaction Effects**
+
 ##### Budget and Popularity
 
-After exploring popularity, it is observable that its values range from 0-2994 with an extremely heavy right skew. Thus, popularity is binned into four categories, "Low", "Medium", "High", and "Very High" with the following thresholds:
-
-|              |                      |
-|--------------|----------------------|
-| **Category** | **Popularity Range** |
-| Low          | 0–30                 |
-| Medium       | 30–90                |
-| High         | 90–150               |
-| Very High    | 150+                 |
+After exploring popularity, it is observable that its values range from 0-2994 with an extremely heavy right skew. Thus, popularity is binned into four categories, "Low", "Medium", "High", and "Very High" corresponding to popularity ranges 0-30, 30-90, 90-150 and 150+ respectively.
 
 ```{r}
 imdb_data_cleaned <- imdb_data_cleaned |>
@@ -201,7 +197,6 @@ Budget and popularity are likely to have interaction effects because higher-budg
 
 ```{r}
 #| echo: false
-#| results: 'hide'
 
 budget_pop_fit <- lm(revenue ~ log_budget * popularity, data = imdb_data_cleaned)
 tidy(budget_pop_fit) |>
@@ -228,7 +223,6 @@ Since movies with higher vote counts often also have higher vote averages, there
 
 ```{r}
 #| echo: false
-#| results: 'hide'
 
 vote_avg_count_fit <- lm(revenue ~ vote_average * vote_count, data = imdb_data_cleaned)
 tidy(vote_avg_count_fit) |>
@@ -416,24 +410,24 @@ tidy(m10) |>
 
 Our final model (Model 3) provides valuable insights into which factors most strongly influence a movie's box office revenue on IMDb. This model included the following predictors: average user rating, movie runtime, adult movie status, mean-centered log-transformed budget, mean-centered popularity rating, total number of movie ratings, an interaction term between mean-centered log-transformed budget and mean-centered popularity, and an interaction term between mean-centered average user rating and total number of movie ratings.
 
-The model explains approximately 85.2% of the variability in log-transformed revenue, as reflected by the adjusted R-squared value of 0.852. The RMSE of the model was approximately 2.132, indicating relatively low residual error on a log scale. The intercept 12.66 represents an expected revenue of approximately 315,000 USD when all predictors are zero. However, since it's not feasible for all predictors to be zero in a real-world context, the intercept doesn't represent a meaningful value in this scenario. Furthermore, several predictors emerge as statistically significant contributors in explaining revenue: 
+The model explains approximately 85.2% of the variability in log-transformed revenue, as reflected by the adjusted R-squared value of 0.852. The RMSE of the model was approximately 2.132, indicating relatively low residual error on a log scale. The intercept 12.66 represents an expected revenue of approximately 315,000 USD when all predictors are zero. However, since it's not feasible for all predictors to be zero in a real-world context, the intercept doesn't represent a meaningful value in this scenario. Furthermore, several predictors emerge as statistically significant contributors in explaining revenue:
 
-Average IMDb Rating: For a one-unit increase above the mean average IMDb rating, the movie revenue is expected to have an 8.2% increase, holding all other variables constant. This supports our hypothesis that higher-rated movies tend to generate more revenue. 
+Average IMDb Rating: For a one-unit increase above the mean average IMDb rating, the movie revenue is expected to have an 8.2% increase, holding all other variables constant. This supports our hypothesis that higher-rated movies tend to generate more revenue.
 
 Runtime: For every additional minute increase in the movie runtime, the movie revenue is expected to have an approximate 0.5% increase, holding all other factors constant. Runtime shows a small, but statistically significant positive effect on movie revenue, indicating that longer movies may be associated with higher revenues.
 
-Adult Movie Status: Regarding adult movies, adultTRUE has a coefficient of 0.860, indicating that adult movies are expected to have a movie revenue that is approximately 2.36 times the movie revenue of non-adult movies, on average, holding all else constant. Thus, adult films tend to generate more revenue. Surprisingly, the coefficient for adult movies is the greatest among all other predictors, and thus most greatly positively influencing the movie reveue. Contrary to expectations that adult movie status would narrow the movie audience, adult movie status, on average, increases movie revenue. 
+Adult Movie Status: Regarding adult movies, adultTRUE has a coefficient of 0.860, indicating that adult movies are expected to have a movie revenue that is approximately 2.36 times the movie revenue of non-adult movies, on average, holding all else constant. Thus, adult films tend to generate more revenue. Surprisingly, the coefficient for adult movies is the greatest among all other predictors, and thus most greatly positively influencing the movie reveue. Contrary to expectations that adult movie status would narrow the movie audience, adult movie status, on average, increases movie revenue.
 
-For the mean-centered log-transformed budget, for every one unit increase, the movie revenue is expected to be 130% increase, holding all other factors constant. As expected, budget is a significant predictor of revenue, with higher budget films tending to yield higher box office earnings. This aligns with industry trends where more resources generally enable wider distribution, better production value, and stronger marketing. 
+For the mean-centered log-transformed budget, for every one unit increase, the movie revenue is expected to be 130% increase, holding all other factors constant. As expected, budget is a significant predictor of revenue, with higher budget films tending to yield higher box office earnings. This aligns with industry trends where more resources generally enable wider distribution, better production value, and stronger marketing.
 
-For the mean-centered popularity, for every one unit increase in popularity above the mean popularity rating, the movie revenue is expected to have a 1% increase, holding all else constant. Popularity, which proxies online engagement, predicts higher revenue, thus suggesting a link between digital attention and commercial performance. 
+For the mean-centered popularity, for every one unit increase in popularity above the mean popularity rating, the movie revenue is expected to have a 1% increase, holding all else constant. Popularity, which proxies online engagement, predicts higher revenue, thus suggesting a link between digital attention and commercial performance.
 
-For the interaction between budget and popularity, for each additional unit of popularity, the positive effect of a higher budget on revenue diminishes. Specifically, each unit increase in popularity reduces the revenue change associated with budget by approximately 0.2%. This suggests that, among more popular films, the effect on revenue is lower for high-budget movies. 
+For the interaction between budget and popularity, for each additional unit of popularity, the positive effect of a higher budget on revenue diminishes. Specifically, each unit increase in popularity reduces the revenue change associated with budget by approximately 0.2%. This suggests that, among more popular films, the effect on revenue is lower for high-budget movies.
 
-Although the predictors for vote count and the interaction term between average user rating and vote count have coefficients of 0.000 (small, near zero coefficients), these predictors are statistically significant, thus suggesting that these predictors have a small, but meaningful effect on movie revenue. 
+Although the predictors for vote count and the interaction term between average user rating and vote count have coefficients of 0.000 (small, near zero coefficients), these predictors are statistically significant, thus suggesting that these predictors have a small, but meaningful effect on movie revenue.
 
 Overall, the model supports the hypothesis that budget and average rating are key predictors of movie revenue, and additionally highlights the impact of various other predictors and interaction effects.
 
 ### Conclusion
 
- We began this project with the intention to answer our research question asking what production and release factors have the greatest impact on a movie's total revenue. We ultimately achieved this through an exploratory analysis, fitting linear regression models, and conducting model comparison tests. Our analysis indicates that average rating, runtime, adult status, budget and popularity are all strong predictors of revenue, confirmed by low p-values in our linear regression model statistics. We also proved that there was a statistically significant interaction existing between the variables of popularity and budget and between the variables of average rating and vote count, also using p-values. After fitting several models, we found that a model including the interaction effect between budget and popularity and interaction effect between vote average and vote count yielded the lowest RMSE value and the highest adjusted R-squared value (2.13, 0.852). To add to the strength of our model, we dramatically reduce the variance inflation factor among our interaction terms by mean centering popularity and log-transformed budget, as well as mean centering vote average. This effectively reduced our VIF value from approximately 264 to 19. Despite this success, a VIF over 10 is still a risk of multicollinearity, and so this is an inherent limitation of our model. Lastly, we conducted a drop-in deviance test on our final model and determined that the interaction effects were significant, which is important to include in our model. Limitations to our model include our risk of multicollinearity, which we were able to diminish the risk of but not entirely eliminate. We also were forced to drop several columns from our initial data set including “keyword” and “productions companies”, due to the large size of our dataset, possibly eliminating other relevant predictors to predict movie revenue. To further shrink our dataset, we also limited production years, which would prove to be a limitation as it only considers more recent IMDb movies. Our final model yielded an R-squared value of 0.852, indicating that it explains 85.2% variability in revenue of a given film. This is relatively high, but future work could potentially increase this further by including dropped columns discussed in limitations.
+We began this project with the intention to answer our research question asking what production and release factors have the greatest impact on a movie's total revenue. We ultimately achieved this through an exploratory analysis, fitting linear regression models, and conducting model comparison tests. Our analysis indicates that average rating, runtime, adult status, budget and popularity are all strong predictors of revenue, confirmed by low p-values in our linear regression model statistics. We also proved that there was a statistically significant interaction existing between the variables of popularity and budget and between the variables of average rating and vote count, also using p-values. After fitting several models, we found that a model including the interaction effect between budget and popularity and interaction effect between vote average and vote count yielded the lowest RMSE value and the highest adjusted R-squared value (2.13, 0.852). To add to the strength of our model, we dramatically reduce the variance inflation factor among our interaction terms by mean centering popularity and log-transformed budget, as well as mean centering vote average. This effectively reduced our VIF value from approximately 264 to 19. Despite this success, a VIF over 10 is still a risk of multicollinearity, and so this is an inherent limitation of our model. Lastly, we conducted a drop-in deviance test on our final model and determined that the interaction effects were significant, which is important to include in our model. Limitations to our model include our risk of multicollinearity, which we were able to diminish the risk of but not entirely eliminate. We also were forced to drop several columns from our initial data set including “keyword” and “productions companies”, due to the large size of our dataset, possibly eliminating other relevant predictors to predict movie revenue. To further shrink our dataset, we also limited production years, which would prove to be a limitation as it only considers more recent IMDb movies. Our final model yielded an R-squared value of 0.852, indicating that it explains 85.2% variability in revenue of a given film. This is relatively high, but future work could potentially increase this further by including dropped columns discussed in limitations.
